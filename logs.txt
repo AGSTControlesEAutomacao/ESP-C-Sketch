@@ -1,0 +1,255 @@
+Sem Registros 
+Sistema Resetado 
+Falha Vent 1 (Religa Autom.) Z% Maq#
+Falha Vent 2 (Religa Autom.) Z% Maq#
+Falha Fluxo Ar (Religa Autom.) Z% Maq#
+Falha Compressor 1 (Religa Autom.) Z% Maq#
+Falha Compressor 2 (Religa Autom.) Z% Maq#
+Falha Compressor 3 (Religa Autom.) Z% Maq#
+Falha Aquec. 1 (Religa Autom.) Z% Maq#
+Falha Aquec. 2 (Religa Autom.) Z% Maq#
+Falha Umidifica.(Religa Autom.) Z% Maq#
+Grupo Gerador Desl. Z%
+Falhas Resetadas 
+Temperatura Ambiente Normal Z%
+Alimentacao Normalizada Z% Maq#
+Sistema Em Automatico Z% Maq#
+Umidade Normal Z%
+Rede Normal
+Alarme Incendio 1 Desligado Z%
+Maquina Piloto Selecionada 
+Alarme Umidificador OK Z% Maq#
+Termostato Seguranca OK Z% Maq#
+Falha Maquina (Religa Autom.) Z% Maq#
+Fluxo Agua Normal 
+Inversor Emerg. Normalizado Z% Maq#
+Porta Fechada Emerfencia 
+Rendimento (Religa Autom.) Z% Maq#
+Alarme Incendio 2 Desligado 
+Temperatura Retorno Normal 
+Temperatura Entrada Agua Normal 
+Umidade Retorno Normal 
+Perda De Pressao Anormal 
+Perda De Pressao Normal 
+Falha Hab Maqui (Religa Autom.) Z% Maq#
+Nivel Agua Umidificador Normal Z%
+Falha Insuflador (Religa Autom.) 
+Porta Fechada 
+Falha Econom (Religa Autom.) 
+Alarme Incendio 1 Ligado Z%
+Falha De Alimentacao Z% Maq#
+Falha Vent 1 Memorizado Z% Maq#
+Falha Vent 2 Memorizado Z% Maq#
+Falha Fluxo Ar Memorizado Z% Maq#
+Falha Compressor 1 Memorizado Z% Maq#
+Falha Compressor 2 Memorizado Z% Maq#
+Falha Compressor 3 Memorizado Z% Maq#
+Falha Aquec. 1 Memorizado Z% Maq#
+Falha Aquec. 2 Memorizado Z% Maq#
+Falha Umidifica. Memorizado Z% Maq#
+Sistema Em Manutencao Z% Maq#
+Rede Anormal
+Temperatura Ambiente Alta Z%
+Umidade Alta Z%
+Grupo Gerador Ligado Z%
+Alarme Umidificador Z% Maq#
+Falha Termostato Seguranca Z% Maq#
+Temperatura Ambiente Baixa Z%
+Falha Maquina Memorizado Z% Maq#
+Falha Sensor Temper. Interna Z%
+Falha Sensor Umid. Interna Z%
+Falha Temper. Insufl Z% Maq#
+Falha Inversor De Emergencia Z% Maq#
+Falha Sensor Temp. Externa Z%
+Porta Aberta 
+Sensor Presenca Area 1 
+Sensor Presenca Area 2 
+Invasao 
+Rearme Invasao 
+Resumo De Falha C/bloqueio 
+Resumo De Falha Desbloqueado 
+Falha De Comunicacao 
+Falha Fain Coil Memorizado 
+Nivel Minimo Bacia Agua Torre Z% Maq#
+Nivel Critico Bacia Agua Torre Z% Maq#
+Falha Rendimento Memorizado Z% Maq#
+Umidade Baixa Z%
+Temperatura Retorno Alta 
+Temperatura Entrada Agua Alta 
+Umidade Retorno Alta 
+Perda De Pressao Maxima 
+Perda De Pressao Minima 
+Filtro De Ar Externo Sujo 
+Baixo Nivel Agua Umidificador Z%
+Emergencia Acionada Z%
+Falha Damper 
+Filtro Bolsa Rompido 
+Filtro Bolsa Saturado 
+Filtro Bolsa OK 
+Falha Sensor Umid. Externa Z%
+Falha Economizador 
+Temperatura Interna Critica Z%
+Temperatura Int Nao Critica Z%
+Falha Aquec. 3 (Religa Autom.) Z% Maq#
+Falha Aquec. 3 Momorizado Z% Maq#
+Grupo Gerador B.carg Ligado Z%
+Grupo Gerador B.carg Desligado Z%
+Grupo Gerador B.aux Ligado Z%
+Grupo Gerador B.aux Desligado Z%
+Fluxo De Agua Anormal Z% Maq#
+Fluxo De Agua Normalizado Z% Maq#
+Porta Aberta Emergencia 
+Alarme Incendio 2 Ligado 
+Rearme Invasao Automatico 
+Falha Insuflador Memorizado Z%
+Falha Hab Maqui Memorizado Z% Maq#
+Falha Sensor Temper. Retorno Z%
+Falha Sensor Umid. Retorno Z%
+Press Baixa 1 (Religa Autom.) Z% Maq#
+Press Baixa 2 (Religa Autom.) Z% Maq#
+Press Alta 1 (Religa Autom.) Z% Maq#
+Press Alta 2 (Religa Autom.) Z% Maq#
+Press Baixa 1 Memorizado Z% Maq#
+Press Baixa 2 Memorizado Z% Maq#
+Press Alta 1 Memorizado Z% Maq#
+Press Alta 2 Memorizado Z% Maq#
+Falha Sensor Press Desc Comp1 Z% Maq#
+Falha Sensor Press Desc Comp2 Z% Maq#
+Falha Sensor Press Desc Comp3 Z% Maq#
+Falha Sensor Press Succ Comp1 Z% Maq#
+Falha Sensor Press Succ Comp2 Z% Maq#
+Falha Sensor Press Succ Comp3 Z% Maq#
+Falha Sensor Temp.ambiente 1 Z%
+Falha Sensor Temp.ambiente 2 Z%
+Falha Sensor Temp.ambiente 3 Z%
+Falha Sensor Temp.ambiente 4 Z%
+Falha Sensor Umid.ambiente 1 Z%
+Falha Sensor Umid.ambiente 2 Z%
+Falha Sensor Umid.ambiente 3 Z%
+Falha Sensor Umid.ambiente 4 Z%
+Damper Cf Insuflamento Fech. Parcial 
+Damper Cf Insuflamento Fech. Total 
+Damper Cf Retorno Fech. Parcial 
+Damper Cf Retorno Fech. Total 
+Dampers Cf Insuflamento Rearmados 
+Dampers Cf Retorno Rearmados 
+Emergencia Desligada Z%
+Falha Sensor Press Ambiente Z%
+Pressao Ambiente Baixa Z%
+Pressao Ambiente Normal Z%
+Falhas Resetadas 
+Log Eventos Apagado 
+Log Falhas Apagado 
+Sistema Inicializado 
+Falha Sensor Temp.ambiente 5 Z%
+Falha Sensor Umid.ambiente 5 Z%
+Maquina Desbloqueada Z% Maq#
+Maquina Bloqueada Z% Maq#
+Filtro Sujo  Z% Maq#
+Falha Comunic. Modulo Exp 1  
+Falha Comunic. Modulo Exp 2 
+Falha Comunic. Modulo Exp 3 
+Falha Comunic. Modulo Exp 4 
+Falha Comunic. Modulo Exp 5 
+Sensor D'agua No Piso OK  
+Sensor D'agua No Piso Atuando  
+Falha Sensor Temp. Ent. Sala Z%
+Falha Sensor Temp. Sai. Sala  Z%
+Falha Sensor Temp.insuf.geral  Z%
+Falha Sensor Temp.retor.geral  Z%
+Falha Sensor Temp.ent.d'agua  Z% Maq#
+Falha Sensor Temp.sai.d'agua  Z% Maq#
+Falha Sensor Pressao De Ar  Z% Maq#
+Falha Sensor Pressao Ar Duto  Z%
+Falha Sensor Pressao De Agua  Z%
+Falha Sensor Temp. Ent. Cag  Z% Maq#
+Falha Sensor Temp. Sai. Cag  Z% Maq#
+Falha Sensor Temp.ent.g.pri  Z%
+Falha Sensor Temp.sai.g.pri  Z%
+Falha Sensor Temp.ent.g.sec  Z%
+Falha Sensor Temp.sai.g.sec  Z%
+Falha Sensor Temp.ent.g.cag  Z%
+Falha Sensor Temp.sai.g.cag  Z%
+Falha Sensor Temp.ext.chiller 
+Falha Sensor Pressao Anel Sec  Z%
+Cag Em Automatico  Z% Maq#
+Cag Em Manual  Z% Maq#
+Bag Primario Em Automatico  Z% Maq#
+Bag Primario Em Manual  Z% Maq#
+Bag Secundario Em Automatico Z% Maq#
+Bag Secundario Em Manual  Z% Maq#
+Falha Tanque De Expansao  
+Tanque De Expansao Normal  
+Falha Cag Memorizado Z% Maq#
+Falha Cag (Religa Autom.)  Z% Maq#
+F.fluxo D'agua Cag Memorizado  Z% Maq#
+F.fluxo D'agua Cag (Rel.aut.)  Z% Maq#
+Bloqueio Geral Atuando  
+Bloqueio Geral Liberado  
+F.fluxo D'agua Bagpri Memoriz. Z% Maq#
+F.fluxo D'agua Bagpri(Rel.aut.) Z% Maq#
+F.fluxo D'agua Bagsec Memoriz. Z% Maq#
+F.fluxo D'agua Bagsec(Rel.aut.) Z% Maq#
+Falha Bag Pri Memorizado  Z% Maq#
+Falha Bag Pri (Religa Autom.) Z% Maq#
+Falha Bag Sec Memorizado  Z% Maq#
+Falha Bag Sec (Religa Autom.)  Z% Maq#
+Sobrecarga Cag  Z% Maq#
+Sobrecarga Cag Normal  Z% Maq#
+Sobrecarga Bag Pri  Z% Maq#
+Sobrecarga Bag Pri Normal  Z% Maq#
+Sobrecarga Bag Sec  Z% Maq#
+Sobrecarga Bag Sec Normal  Z% Maq#
+Defeito Cag  Z% Maq#
+Defeito Cag Normal  Z% Maq#
+Temp.saida Cag Alta  Z% Maq#
+Temp.saida Cag Alta Normal  
+Temp.saida Cag Baixa  
+Temp.saida Cag Baixa Normal  
+Temp.saida Cag Critica  
+Temp.saida Cag Nao Critica  
+Temperatura Externa Alta 
+Temp. Externa Alta Normal 
+Defeitos Limpos Remotamente 
+Maquinas Standby Liberadas  Z%
+Maquinas Standby Bloqueadas  Z%
+Defeito Valv. Condensacao Z% Maq#
+Falha Sensor Temp.ent. Torre Z% Maq#
+Falha Sensor Temp.sai. Torre  Z% Maq#
+Falha Sensor Temp.ent.g.bac  
+Falha Sensor Temp.sai.g.bac  
+Falha Sensor Temp.ent.g.torre 
+Falha Sensor Temp.sai.g.torre 
+Falha Sensor Temp. Ext. Torre 
+Falha Sensor Pres. D'agua Bac 
+Torre Em Automatico  Z% Maq#
+Torre Em Manual  Z% Maq#
+Bac Em Automatico  Z% Maq#
+Bac Em Manual  Z% Maq#
+Falha Torre Memorizado  Z% Maq#
+Falha Torre (Religa Autom.)  Z% Maq#
+Falha Bac Memorizado  Z% Maq#
+Falha Bac (Religa Autom.) Z% Maq#
+F.fluxo D'agua Torre Memorizado  Z% Maq#
+F.fluxo D'agua Torre (Rel.aut.) Z% Maq#
+F.fluxo D'agua Bac Memorizado  Z% Maq#
+F.fluxo D'agua Bac (Rel.aut.)  Z% Maq#
+Sobrecarga Torre  Z% Maq#
+Sobrecarga Bac  Z% Maq#
+Defeito Torre  Z% Maq#
+Temp.saida Torre Alta  
+Temp.saida Torre Alta Normal  
+Temp.saida Torre Baixa  
+Temp.saida Torre Baixa Normal  
+Temp.saida Torre Critica  
+Temp.saida Torre Nao Critica  
+Nivel D'agua Baixo  
+Nivel D'agua Critico  
+Nivel D'agua Baixo Torre  Z% Maq#
+Nivel D'agua Critico Torre  Z% Maq#
+Falha Valvula Ent.d'agua Torre Z% Maq#
+Z% Maq#
+Bomba Rep. Em Automatico Z% Maq#
+Bomba Rep. Em Manual Z% Maq#
+Falha Bomba Rep. Memorizado Z% Maq#
+Falha Bomba Rep. (Religa Autom.) Z% Maq#

@@ -1,0 +1,709 @@
+<html>
+
+<head>
+	<title>Controlador AGST</title>
+	<meta http-equiv="content-type" content="text/html;charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="icon" href="/favicon.ico" />
+	<link href="/style.css" rel="stylesheet" />
+	<script src="/jquery-3.6.0.min.js"></script>
+	<script src="/scripts.js"></script>
+	<style>
+		/* Estilos para o retângulo de sobreposição */
+		.overlay-wifi {
+			display: none;
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background-color: rgba(0, 0, 0, 0.7);
+			/* Fundo borrado */
+			z-index: 999;
+		}
+
+		.modal-wifi {
+			position: fixed;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			background-color: white;
+			padding: 20px;
+			border-radius: 5px;
+			box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+		}
+
+		/* Estilos para a lista de itens */
+		.modal-wifi ul {
+			list-style-type: none;
+			padding: 0;
+		}
+
+		.modal-wifi li {
+			margin: 15px 0;
+			cursor: pointer;
+			color: inherit;
+			text-decoration: underline;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="overlay-wifi" id="overlay-wifi">
+		<div class="modal-wifi">
+			<h2>Lista de Redes Disponiveis</h2>
+			<ul id="wifi-list">
+				<!-- <li onclick="connectWifi('SSID1')">SSID1 - 75%</li> -->
+			</ul>
+			<input type="button" class="btn" onclick="hideWifi()" value="Fechar" title="Não seleciona nenhum Wifi" />
+		</div>
+	</div>
+	<div class="div-top">
+		<header>
+			<a class=i-menu onclick=openCloseMenu() title=Menu><i>&#xf00b</i></a>
+			<ul class=ul-right>
+				<li><a href=painel.html title="Alertas Ativos"><i>&#xf001</i><span class=ntf></span></a></li>
+				<li><a href=logout.html title=Sair><i>&#xf011</i></a></li>
+			</ul>
+			<nav id="menu-nav">
+			</nav>
+			<script>
+				$(document).ready(function () {
+					ajaxMenu();
+				});
+			</script>
+		</header>
+	</div>
+	<main class="config">
+		<div class="cntnr">
+			<div class="btn-box top">
+				<input class="btn wht" type="submit" value="Padrão" title="Restabelece as configurações de fábrica"
+					onclick="show('.l-wrn')" id="configPadrao" />
+				<input class="btn" type="submit" value="Importar" onclick="importAGST()"
+					title="Importa as configurações" />
+				<input class="btn" type="submit" value="Exportar" onclick="exportAGST()"
+					title="Exporta as configurações" />
+			</div>
+			<div style="display:none" id="importar" class="box-importar"> <input type="file" id="fileinput"
+					onchange="loadFile(this); this.value=null;" accept=".json"></div>
+			<ul class="tabs">
+				<li style="cursor: pointer !important;" class="act"><a class="tbrede">Rede</a></li>
+				<li style="cursor: pointer !important;"><a class="tbserver">Servidores</a></li>
+				<li style="cursor: pointer !important;"><a class="tbaccess">Acesso</a></li>
+			</ul>
+			<form id="sendConf" action="" method='post' class='frm' onsubmit="return canSubmit(this)">
+				<div class="tb-cnt">
+					<div class="item act" id="rede">
+						<div class="msg-alrt">
+							<p class="msg">As alterações realizadas ainda não foram salvas. Deseja salvar todas as abas
+								agora?</p>
+							<div class="btn-box">
+								<input class="btn red" type=button name=sub onclick="resetfrm()" value="Não"
+									title="Não" />
+								<input class="btn grn" type=submit name=re value="Sim" title="Sim" />
+							</div>
+						</div>
+						<div class="blk-lft">
+							<div class="tbl-rsp no-overflow">
+								<table>
+									<tr>
+										<td><label>Nome do Dispositivo</label></td>
+										<td><input type="text" name="nm" id="nm" value="" maxlength="15"
+												placeholder="Controlador AGST" pattern="[A-z0-9 ]{4,16}"
+												title="Digitar de 4 a 15 letras e/ou números" /></td>
+									</tr>
+									<tr>
+										<td><label>Porta Plataforma Web</label></td>
+										<td><input type="number" name="pw" value="" id="pw" min="80" max="65534"
+												required placeholder="80"
+												title="Entrar com valor entre 80 a 65534 para acesso a interface Web" />
+										</td>
+									</tr>
+									<tr>
+										<th colspan="2"><label>Ethernet</label></th>
+									</tr>
+									<tr>
+										<td><label for="dhcp">DHCP</label></td>
+										<td><input type="checkbox" id="dhcp" name="dhcp" onchange="listenerDHCP()"
+												title="Marque para ativar como cliente DHCP" /></td>
+									</tr>
+									<tr>
+										<td><label>IP</label></td>
+										<td><input type="text" name="ip" id="ip" class="rede" value=""
+												placeholder="192.168.1.2" required maxlength="15"
+												pattern="((^|\.)((25[0-5])|(2[0-4]\d)|(1\d\d)|([1-9]?\d))){4}$"
+												title="Exemplo valor válido:" />
+										</td>
+									</tr>
+									<tr>
+										<td><label>Máscara</label></td>
+										<td><input type="text" name="mk" id="mk" class="rede" value=""
+												placeholder="255.255.0.0" required maxlength="15"
+												pattern="((^|\.)((25[0-5])|(2[0-4]\d)|(1\d\d)|([1-9]?\d))){4}$"
+												title="Exemplo valor válido: " />
+										</td>
+									</tr>
+									<tr>
+										<td><label>Gateway</label></td>
+										<td><input type="text" name="gw" id="gw" class="rede" value=""
+												placeholder="192.168.1.1" required maxlength=15
+												pattern="((^|\.)((25[0-5])|(2[0-4]\d)|(1\d\d)|([1-9]?\d))){4}$"
+												title="Exemplo valor válido: " />
+										</td>
+									</tr>
+									<tr>
+										<td><label>DNS</label></td>
+										<td><input type="text" name="dns" id="dns" class="rede" value=""
+												placeholder="1.1.1.1" required maxlength="15"
+												pattern="((^|\.)((25[0-5])|(2[0-4]\d)|(1\d\d)|([1-9]?\d))){4}$"
+												title="Exemplo valor válido: " />
+										</td>
+									</tr>
+									<tr>
+										<th colspan="2"><label>Wifi (Somente DHCP)</label></th>
+									</tr>
+									<tr>
+										<td><label>SSID Wifi (Somente 2.4Ghz)</label></td>
+										<td><input type="text" name="wlssid" value="" id="wlssid" placeholder="Seu Wifi"
+												title="Entrar com SSID para conexão Wifi (Somente 2.4Ghz)" />
+										</td>
+
+									</tr>
+									<tr>
+										<td><label>Senha Wifi</label></td>
+										<td><input type="password" name="wlpass" value="" id="wlpass"
+												placeholder="Senha do Wifi"
+												title="Entrar com senha para conexão Wifi" />
+										</td>
+									</tr>
+									<tr>
+										<td></td>
+										<td>
+											<input type="button" class="btn wht" onclick="showWifi()"
+												value="Buscar Wifi" title="Realiza um Scan nos Wifis da região." />
+										</td>
+									</tr>
+								</table>
+							</div>
+						</div>
+						<div class="blk-rgt">
+							<div class="tbl-rsp no-overflow">
+								<table>
+									<tr>
+										<th colspan="2"><label>Modbus</label></th>
+									</tr>
+									<tr>
+										<td><label>Protocolo</label></td>
+										<td>
+											<select name="pc" id="pc" data-selected="1"
+												title="Escolha o protocolo utilizado na porta de serviço Socket">
+												<option value="0">Modbus RTU Over TCP/UDP</option>
+												<option value="1">Modbus TCP/UDP</option>
+											</select>
+										</td>
+									</tr>
+
+									<tr>
+										<td><label>Porta de Serviço Socket</label></td>
+										<td><input type="number" name="ps" id="ps" value="" min="100" max="65534"
+												required placeholder=""
+												title="Entrar com valor entre 100 a 65534 para porta de serviço Socket" />
+										</td>
+									</tr>
+									<!-- <tr>
+										<td><label>Timeout (seg)</label></td>
+										<td><input type="number" name="to" value="" min="0" max="32767" required
+												placeholder="" title="Entrar com valor entre 0 e 32767 segundos para tempo máximo de
+											conexão inativa. Zero deixa de encerrar a conexão por inatividade." /></td>
+									</tr> -->
+								</table>
+							</div>
+						</div>
+					</div>
+					<div class="item" id="server">
+						<div class="msg-alrt">
+							<p class="msg">As alterações realizadas ainda não foram salvas. Deseja salvar todas as abas
+								agora?</p>
+							<div class="btn-box">
+								<input class="btn red" name=sub type="button" onclick="resetfrm()" value="Não"
+									title="Não" />
+								<input class="btn grn" name=se type="submit" value="Sim" title="Sim" />
+							</div>
+						</div>
+						<div class="blk-lft">
+							<div class="tbl-rsp">
+								<table>
+									<tr>
+										<th colspan="2"><label>SMTP</label></th>
+									</tr>
+									<tr>
+										<td><label>Usuário</label></td>
+										<td><input type="text" name="us" id="us" value="" maxlength="46"
+												placeholder="alarmes@agst.com.br"
+												pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,4}$"
+												title="O endereço deve ter entre 4 e 46 caracteres" /></td>
+									</tr>
+
+									<tr>
+										<td><label>Senha</label></td>
+										<td><input type="password" name="sn" id="sn" value="" maxlength="14"
+												placeholder="Senha"
+												title="A senha deve ter no no máximo 14 caracteres" /></td>
+									</tr>
+									<tr>
+										<td><label>Servidor de Saída</label></td>
+										<td><input type="text" name="sm" id="sm" value="" maxlength="35"
+												placeholder="smtpi.kinghost.net" pattern="[a-z0-9_.\-]{4,30}" /></td>
+									</tr>
+									<tr>
+										<td><label>Porta do servidor de Saída</label></td>
+										<td><input type="number" name="pt" id="pt" min="25" max="65534" required
+												value="" placeholder="465" /></td>
+									</tr>
+									<tr>
+										<td><label>Servidor com SSL/TLS</label></td>
+										<td>
+											<input type="radio" id="ssl" name="ssl" value="ssl"
+												title="Marque para ativar envio de emails usando servidor SMTP com segurança" />
+											<label>SSL/TLS</label>
+											<input type="radio" name="ssl" value="stls"
+												title="Marque para ativar envio de emails usando servidor SMTP com segurança STARTTLS" />
+											<label>STARTTLS</label>
+										</td>
+									</tr>
+									<tr>
+										<td><label>Servidor sem SSL/TLS</label></td>
+										<td>
+											<input type="radio" name="ssl" value="plain"
+												title="Marque para ativar envio de emails usando servidor SMTP sem segurança" />
+											<label>Sem Segurança</label>
+											<input type="radio" name="ssl" value="noauth"
+												title="Marque para ativar envio de emails usando servidor SMTP sem segurança e sem autenticação" />
+											<label>Sem Segurança e Sem Autenticação</label>
+										</td>
+									</tr>
+									<tr>
+										<td><label>Link alternativo para email</label></td>
+										<td><input type="url" name="la" id="la" value="" maxlength="49"
+												pattern="(https://.*|http://.*)"
+												placeholder="http://link.alternativo.com.br:8080"
+												title="Digitar de 0 a 49 caracteres de URI" /></td>
+									</tr>
+									<tr>
+										<td><label>E-mail para teste</label></td>
+										<td><input type="text" name="em" id="em" class="exc" maxlength="46"
+												placeholder="teste@seudominio.com.br"
+												pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,4}$" />
+										</td>
+									</tr>
+									<tr>
+										<td></td>
+										<td>
+											<input class="btn wht" type="submit" name=email
+												onclick="return confirm('Antes de enviar o e-mail de testes todas as alterações serão gravadas. Deseja grava-las e continuar?')"
+												value="Enviar Teste" title="Enviar Teste" /></br>
+									</tr>
+								</table>
+							</div>
+						</div>
+						<div class="blk-rgt">
+							<div class="tbl-rsp">
+								<table>
+									<tr>
+										<th colspan="2"><label>SNMP</label></th>
+									</tr>
+									<tr>
+										<td><label>Gerente 1</label></td>
+										<td><input type="text" name="sp1" id="sp1" value="" maxlength=15
+												placeholder="192.168.1.3" required
+												pattern="((^|\.)((25[0-5])|(2[0-4]\d)|(1\d\d)|([1-9]?\d))){4}$"
+												title="Exemplo valor válido: " />
+										</td>
+									</tr>
+									<tr>
+										<td><label>Gerente 2</label></td>
+										<td><input type="text" name="sp2" id="sp2" value="" maxlength=15
+												placeholder="192.168.1.4" required
+												pattern="((^|\.)((25[0-5])|(2[0-4]\d)|(1\d\d)|([1-9]?\d))){4}$"
+												title="Exemplo valor válido: " />
+										</td>
+									</tr>
+									<tr>
+										<td><label>Porta Agente</label></td>
+										<td><input type="number" name="pa" id="pa" value="" min=100 max=65534
+												placeholder="161"
+												title="Entrar com valor entre 100 a 65534 para acesso do Gerente SNMP" />
+										</td>
+									</tr>
+									<tr>
+										<td><label>Porta Trap</label></td>
+										<td><input type="number" name="tp" id="tp" value="" min=100 max=65534
+												placeholder="162"
+												title="Entrar com valor entre 100 a 65534 para o TRAP SNMP" /></td>
+									</tr>
+									<tr>
+										<td><label>Comunidade</label></td>
+										<td><input type="text" name="cm" id="cm" value="" maxlength=20
+												placeholder="public" pattern="[A-z0-9]{4,16}"
+												title="Digitar de 4 a 20 letras e/ou números" /></td>
+									</tr>
+									<tr>
+										<td></td>
+										<td>
+											<input class="btn wht" type="submit" name=trap
+												onclick="return confirm('Antes de enviar o trap de testes todas as alterações serão gravadas. Deseja grava-las e continuar?')"
+												value="Enviar Teste" title="Enviar Teste" />
+										</td>
+									</tr>
+								</table>
+							</div>
+						</div>
+					</div>
+					<div class="item" id="access">
+						<div style="display:none">
+							<table>
+								<tr class="user-template">
+									<td>
+										<!-- fake fields are a workaround for chrome autofill getting the wrong fields --><input
+											style="display:none" type="text" name=uu[n] disabled />
+										<input type="text" name="uu[n]" maxlength="15" class="lst usr" value="{0}"
+											placeholder="Nome" autocomplete="off" />
+									</td>
+									<td>
+										<select name="un[n]" required>
+											<option value="0">Administrador</option>
+											<option value="1">Operador</option>
+										</select>
+									</td>
+									<td>
+										<!-- fake fields are a workaround for chrome autofill getting the wrong fields --><input
+											style="display:none" type="text" name=us[n] disabled />
+										<input name="us[n]" type="password" maxlength="7" class="lst pass1" value="{2}"
+											placeholder="Senha" autocomplete="off" />
+									</td>
+									<td><input type="password" maxlength="7" class="lst pass2" value="{3}"
+											placeholder="Repetir senha" autocomplete="off" /></td>
+									<td>
+										<!--<div class="btn-box">-->
+										<div class="btn-box remover[n]">
+											<a class="btn red" href="javascript:removerUsuario({idx})"
+												title="Remover">Remover</a>
+										</div>
+									</td>
+								</tr>
+							</table>
+						</div>
+						<div class="msg-alrt">
+							<p class="msg">As alterações realizadas ainda não foram salvas. Deseja salvar todas as abas
+								agora?</p>
+							<div class="btn-box">
+								<input class="btn red" name="sub" type="button" onclick="resetfrm()" value="Não"
+									title="Não" />
+								<input class="btn grn" name=ac type="submit" value="Sim" title="Sim" />
+							</div>
+						</div>
+						<div class="tbl-rsp">
+							<table class="wht tbl-min usuarios">
+								<thead>
+									<tr class="cpt">
+										<td><label>Nome</label></td>
+										<td><label>Acesso</label></td>
+										<td><label>Senha</label></td>
+										<td><label>Confirmação senha</label></td>
+										<td></td>
+									</tr>
+
+								</thead>
+								<tbody></tbody>
+							</table>
+						</div>
+						<div class="btn-box clr">
+							<!--<a class="btn hvy" href="javascript:addUsuario('', 'o', '', '', true);" title="Adicionar">Adicionar</a>-->
+							<a class="btn hvy" href="javascript:addUsuario('NovoUsuario', 1, '', '', true, false);"
+								title="Adicionar">Adicionar</a>
+						</div>
+						<!-- <?if(flgPassVazio){?>
+						<div class="msg-pass">
+							<p class="msg">Senha de novo usuário não pode ser vazia.</p>
+						</div>
+						<?}?> -->
+					</div>
+				</div>
+				<input type="text" style="display:none" id="dhcp-hidden" name="dhcp" value="off" />
+				<input type="text" style="display:none !important" id="hdnchg" name="hdnchg" value="" />
+			</form>
+		</div>
+	</main>
+
+	<div class="l-wrn" style="display:none">
+		<p>
+			Tem certeza que deseja recarregar as configurações padrão?
+		</p>
+		<div class=btn-box>
+			<form action="" method=post>
+				<input type=hidden name="usr" value="server" />
+				<a class="btn red" href="javascript:hide('.l-wrn')" id="backConfig" title="Cancelar">Cancelar</a>
+				<input class="btn grn" type="submit" name=pa value="Prosseguir" title="Prosseguir" />
+			</form>
+
+		</div>
+	</div>
+	<script>
+		var usuariosCount = 0;
+		var defaultUsers = [];
+		var MAXUSERS = 0;
+		var receivedAll = false;
+
+		//Listener que habilita e desabilita IP, Mask, Gateway e DNS ao clicar no checkbox do DHCP
+		function listenerDHCP() {
+			let val = $("#dhcp")[0].checked;
+			let def = $("#dhcp").attr('initial-value');
+
+			if (val == true) {
+				// $("#dhcp-hidden").attr('disabled', true);
+				$('.rede').each(function () {
+					let jEl = $(this);
+					this.disabled = true;
+					jEl.removeClass('destacar');
+					jEl.addClass('desabilitado');
+				});
+			}
+			else {
+				// $("#dhcp-hidden").removeAttr('disabled');
+				if (val != def) {
+					$('.rede').each(function () {
+						let jEl = $(this);
+						this.disabled = false;
+						jEl.removeClass('desabilitado');
+						jEl.addClass('destacar');
+					});
+				}
+				else
+					$('.rede').each(function () {
+						$(this).removeClass('desabilitado');
+					});
+			}
+
+			checkBoxListener();
+		}
+		// function listenerSSL() {
+		// 	let val = $("#ssl")[0].checked;
+
+		// 	if (val == true) {
+		// 		$("#ssl-hidden").attr('disabled', true);
+		// 	}
+		// 	else {
+		// 		$("#ssl-hidden").removeAttr('disabled');
+		// 	}
+		// }
+
+		function addUsuario(usuario, nivel, senha, repetir_senha, red, logado) { //CORRIGIR ULTIMO PARAMETRO
+			if ($(".usuarios tbody")[0].rows.length >= MAXUSERS)
+				alert("A quantidade máxima de usuários foi atingida.")
+			else {
+				let tabela = document.querySelector(".usuarios tbody");
+				let template = document.querySelector(".user-template");
+				let row = tabela.insertRow();
+				usuariosCount++;
+				if (red != false) {
+					row.classList.add("chg");
+					$('.msg-alrt').addClass('act');
+				}
+				else {
+					row.classList.add("original")
+				}
+				row.innerHTML = template.innerHTML.replace(/\[n\]/g, usuariosCount).replace(/\{0\}/, usuario).replace(/\{2\}/, senha).replace(/\{3\}/, repetir_senha).replace(/\{idx\}/, usuariosCount);
+				row.classList.add("item" + usuariosCount);
+
+
+				//alert(".usuarios tbody tr:nth-child(" + usuariosCount + ")")
+				let _tr = document.querySelector(".usuarios tbody tr.item" + usuariosCount);
+				_tr.querySelector("select").value = nivel;
+
+				let elements = _tr.querySelectorAll("input,select,textarea");
+				for (let i = 0; i < elements.length; i++) {
+					if (red == true) {
+						elements[i].className += " chg";
+						// let el = $(elements[i]);
+						// el.attr('initial-value', "VALOR-RIDICULO-PARA-NUNCA-DEIXAR-DE-SER-VERMELHO");
+					}
+					else {
+						let el = $(elements[i]);
+						el.attr('initial-value', elements[i].value);
+						el.change((evt) => changeField(evt, el));
+					}
+				}
+
+				if (document.getElementsByName("uu" + usuariosCount)[1].value == "") document.getElementsByName("uu" + usuariosCount)[1].focus(); //Adiciona Foco na caixa de novo usuario.
+
+				function corrAdmin() {
+					document.getElementsByName("un" + usuariosCount)[0].value = 0;
+				}
+
+				if (logado == true) { 									//Verifica se atual usuario é o logado e bloqueia a edição do proprio nome e nivel de acesso para evitar que TODOS usuarios sejam apagados.
+					document.getElementsByName("uu" + usuariosCount)[1].readOnly = true;
+					let ele = document.getElementsByName("un" + usuariosCount)[0];
+					let tamanho = ele.options.length;
+					for (let i = 1; i < tamanho; i++) {
+						ele.remove(i);
+					}
+
+					//Remove botão de remover usuario
+					$(".remover" + usuariosCount)[0].style.display = 'none';
+				}
+			}
+		}
+		function removerUsuario(idx) {
+			let item = document.querySelector(".usuarios tbody .item" + idx);
+			if (item.classList.contains("original")) {
+				$('.msg-alrt').addClass('act');
+				$('#hdnchg').addClass('chg'); //Coloca a classe change em um input oculto para não tirar o botão de SIM/NÃO da tela se não tiver mais alteração no form
+			}
+			document.querySelector(".usuarios tbody").removeChild(item);
+
+			checkChanges();
+		}
+
+		function canSubmit(form) {
+			if (!receivedAll) {
+				alert('Aguarde a recepção dos Dados.');
+				return false;
+			}
+			//Validando campos de usuarios
+			let userNameRptChk = {
+			}
+			for (let i = 0; i < usuariosCount + 1; i++) {
+				try {
+					let changed = false; //Identifica se Alterou algo
+					let userRow = $(`.item${i}`).children();
+					if (userRow.length == 0) continue; //Ignora linhas não existentes
+
+					let userName = $(userRow.children()[1]).val();
+					changed = $(userRow.children()[1]).hasClass('chg') ? true : changed; //Verifica se alterou usuario
+					let passWord = $(userRow.children()[4]).val();
+					changed = $(userRow.children()[4]).hasClass('chg') ? true : changed; //Verifica se alterou senha
+					let passWordCheck = $(userRow.children()[5]).val();
+
+					//Soma quantas vezes esse usuario já apareceu.
+					if (userName in userNameRptChk) {
+						userNameRptChk[userName]++;
+						alert("Não é possivel enviar mais de um usuario com o mesmo nome.");
+						return false;
+					} else {
+						userNameRptChk[userName] = 1;
+					}
+
+					if (passWord != passWordCheck) {
+						alert("Os campos de senha e confirmação de senha na aba Acesso não estão correspondentes.");
+						return false;
+					}
+					if (changed && passWord == "") {
+						alert("Para realizar alteração de usuarios é necessario alterar a senha em conjunto.");
+						return false;
+					}
+				} catch (err) {
+					console.log(`item${i} não existe`);
+				}
+
+			}
+
+			return true;
+		}
+
+		function showWifi() {
+			$('#overlay-wifi').css('display', 'block');
+
+			let pageList = $('#wifi-list');
+			pageList.empty();
+			pageList.append('<li>CARREGANDO AGUARDE</li>');
+			$.ajax({
+				url: "/wifiscan",
+				method: "GET",
+				dataType: "json",
+				success: function (response) {
+					pageList.empty();
+					for (let el of response) {
+						pageList.append(`<li onclick='selectWifi("${el.ssid}")'>${el.ssid} - ${Math.round(((el.rssi - (-100)) / ((-30) - (-100))) * 100)}%</li>`);
+					}
+				},
+				statusCode: {
+					401: () => {
+						pageList.empty();
+						pageList.append('<li onclick="window.location.href=window.location.href">Sessão Encerrada, realizar login novamente.</li>');
+					},
+					403: () => {
+						pageList.empty();
+						pageList.append('<li onclick="window.location.href=window.location.href">Sem acesso, realizar login novamente.</li>');
+					}
+				},
+				error: function () {
+					pageList.empty();
+					pageList.append('<li onclick="showWifi()">Falha ao Carregar tentar novamente?</li>');
+				}
+			});
+		}
+		function hideWifi() {
+			$('#overlay-wifi').css('display', 'none');
+		}
+		function selectWifi(ssid) {
+			let el = $('#wlssid');
+			el.val(ssid);
+			el.trigger('change'); //Dispara o change pra deixar vermelho se necessario
+		}
+
+		$(document).ready(function () {
+			//Adiciona listeners das abas
+			addTabListener();
+
+			//Carrega os dados para dentro dos campos.
+			$.ajax({
+				url: "systemconfig",
+				method: "GET",
+				dataType: "json",
+				success: function (response) {
+					// Iterar sobre as chaves do JSON e preencher os campos correspondentes
+					formFieldsFiller(response);
+					listenerDHCP(); //Executa a função que bloqueia ou desbloqueia os campos de rede e ajusta o checkbox invisivel.
+					receivedAll = true;
+
+					//Adiciona os usuarios a lista de usuarios.
+					MAXUSERS = response.maxUsers;
+					for (let key in response.users) {
+						addUsuario(key, response.users[key].level, "", "", false, response.users[key].currentUser);
+					}
+				},
+				error: function () {
+					alert("Erro ao carregar configurações do sistema.");
+				}
+			});
+
+
+		});
+	</script>
+
+	<!-- <?}else{?>
+	<div style="padding-left: 34%;padding-top: 10%;">Aguarde enquanto <b>tentamos</b> redirecioná-lo novamente a página
+		de configurações.</div>
+	<div class="wper">
+		<div id="pre">
+			<span></span>
+		</div>
+		<div id="precount">
+			<span id="countdowntimer">--</span>
+		</div>
+		<script type="text/javascript">
+			var timeleft = <?if (get_http_arg(http_rq, "pa=") == "Prosseguir") { sock.setdata("60"); sock.send(); }
+			else if (get_http_arg(http_rq, "dhcp=") == "on") { sock.setdata("60"); sock.send(); }
+			else { sock.setdata("8"); sock.send(); }?>;
+			var refreshTimer = setInterval(function () {
+				timeleft--;
+				document.getElementById("countdowntimer").textContent = ('0' + timeleft).slice(-2);
+				if (timeleft <= 0)
+					clearInterval(refreshTimer);
+			}, 1000);
+		</script>
+	</div>
+	<?}?> -->
+</body>
+
+</html>

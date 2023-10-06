@@ -1,0 +1,393 @@
+<html lang="pt-br">
+
+<head>
+	<title>Controlador AGST</title>
+	<meta http-equiv="content-type" content="text/html;charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="icon" href="favicon.ico" />
+	<link href="/style.css" rel="stylesheet" />
+	<script src="/jquery-3.6.0.min.js"></script>
+	<script src="/scripts.js"></script>
+</head>
+
+<body>
+	<div class="div-top">
+		<header>
+			<a class=i-menu onclick=openCloseMenu() title=Menu><i>&#xf00b</i></a>
+			<ul class=ul-right>
+				<li><a href=painel.html title="Alertas Ativos"><i>&#xf001</i><span class=ntf></span></a></li>
+				<li><a href=logout.html title=Sair><i>&#xf011</i></a></li>
+			</ul>
+			<nav id="menu-nav">
+			</nav>
+			<script>
+				$(document).ready(function () {
+					ajaxMenu();
+				});
+			</script>
+		</header>
+	</div>
+	<main class=home>
+		<div class=cntnr>
+			<div class=blk-wht>
+				<div class=top>
+					<p>Sobre o Conflex</p>
+				</div>
+				<div class=tbl-rsp>
+					<table>
+						<tr>
+							<td><label>Nome do Dispositivo</label></td>
+							<td colspan=2><label class=light id="dn"></label></td>
+						</tr>
+						<tr>
+							<td><label>Modelo</label></td>
+							<td colspan=2><label class=light id="dm"></label></td>
+						</tr>
+						<tr>
+							<td><label>Número de Série</label></td>
+							<td colspan=2><label class=light id="sn"></label></td>
+						</tr>
+						<tr>
+							<td><label>Data de Fabricação</label></td>
+							<td colspan=2><label class=light id="md"></label></td>
+						</tr>
+						<tr>
+							<td><label>CLP Mensagens</label></td>
+							<td colspan=2><label class=light id="cmv"></label></td>
+						</tr>
+						<tr>
+							<td><label>CLP Firmware</label></td>
+							<td colspan=2><label class=light id="cfv"></label></td>
+						</tr>
+						<tr>
+							<td><label>Web Aplicativo</label></td>
+							<td><label class=light id="wav"></label></td>
+							<td><label class=light id="wabk"></label></td>
+						</tr>
+						<tr>
+							<td><label>Partição de Boot</label></td>
+							<td><label class=light id="bp"></label></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+
+			<div class=blk-wht id="gsm-panel">
+				<div class=top>
+					<p>Sobre o GSM</p>
+					<i>&#xf00c</i>
+				</div>
+				<div class="tbl-rsp sin0">
+					<table>
+						<tr>
+							<td class=ctr>
+								<i class=sig-ty>
+
+								</i>
+							</td>
+							<td>
+								<p class=op-name>
+
+								</p>
+								<p class=op>operadora</p>
+								<p class=sig-ty>
+
+								</p>
+								<p class=sig>sinal</p>
+							</td>
+						</tr>
+						<tr>
+							<td><label>Número</label></td>
+							<td><label class="light">
+
+								</label></td>
+						</tr>
+						<tr>
+							<td><label>ICCID</label></td>
+							<td><label class="light">
+
+								</label></td>
+						</tr>
+						<tr>
+							<td><label>IMEI</label></td>
+							<td><label class="light">
+
+								</label></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+
+
+			<div class=blk-wht>
+				<div class=top>
+					<p>Conexão de Rede</p>
+					<i>&#xf040</i>
+					<i>&#xf00d</i>
+				</div>
+				<div class=tbl-rsp>
+					<table>
+						<tr>
+							<td><label>Interface</label></td>
+							<td><label class=light style="text-align: center;">🖥️</label></td>
+							<td><label class=light style="text-align: center;">📶</label></td>
+						</tr>
+						<tr>
+							<td><label>DHCP</label></td>
+							<td><label class=light id="dhcp0"></label></td>
+							<td><label class=light id="dhcp1"></label></td>
+						</tr>
+						<tr>
+							<td><label>IP</label></td>
+							<td><label class=light id="ip0"></label></td>
+							<td><label class=light id="ip1"></label></td>
+						</tr>
+						<tr>
+							<td><label>Máscara</label></td>
+							<td><label class=light id="submask0"></label></td>
+							<td><label class=light id="submask1"></label></td>
+						</tr>
+						<tr>
+							<td><label>Gateway</label></td>
+							<td><label class=light id="gateway0"></label></td>
+							<td><label class=light id="gateway1"></label></td>
+						</tr>
+						<tr>
+							<td><label>MAC</label></td>
+							<td><label class=light id="mac0"></label></td>
+							<td><label class=light id="mac1"></label></td>
+						</tr>
+						<tr>
+							<td><label>DNS</label></td>
+							<td><label class=light id="dns0"></label></td>
+							<td><label class=light id="dns1"></label></td>
+						</tr>
+						<!-- <tr>
+							<td><label>Porta WebServer</label></td>
+							<td>
+								<label class=light></label>
+							</td>
+						</tr> -->
+						<tr>
+							<td><label>Link</label></td>
+							<td><label class=light id="lnk0"></label></td>
+							<td><label class=light id="lnk1"></label></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+
+			<div class=blk-wht>
+				<div class=top>
+					<p>Conexão Socket</p>
+					<i>&#xf00f</i>
+				</div>
+				<div class=tbl-rsp>
+					<table>
+						<tr>
+							<td><label>Protocolo</label></td>
+							<td><label class=light id="mbtp"></label></td>
+						</tr>
+						<tr>
+							<td><label>Porta Socket</label></td>
+							<td><label class=light id="mbp"></label></td>
+						</tr>
+						<!-- <tr>
+							<td><label>Timeout</label></td>
+							<td><label class=light></label></td>
+						</tr> -->
+						<!-- <tr>
+							<td><label>Conexão</label></td>
+							<td>
+								<label class=light></label>
+							</td>
+						</tr> -->
+						<!-- <tr>
+							<td><label>Timeout</label></td>
+							<td>
+								<label class=light>
+									de
+								</label>
+								<label class=light>
+
+								</label>
+							</td>
+						</tr> -->
+						<!-- <tr>
+							<td><label>Cliente</label></td>
+							<td>
+								<label class=light></label>
+							</td>
+						</tr> -->
+					</table>
+				</div>
+			</div>
+
+			<div class=blk-wht>
+				<div class=top>
+					<p>Sobre SMTP</p>
+					<i>&#xf00e</i>
+				</div>
+				<div class=tbl-rsp>
+					<table>
+						<tr>
+							<td><label>Servidor</label></td>
+							<td><label class=light id="msrv"></label></td>
+						</tr>
+						<tr>
+							<td><label>Status Servidor</label></td>
+							<td>
+								<label class=light> OK</label>
+							</td>
+						</tr>
+						<tr>
+							<td><label>Porta</label></td>
+							<td><label class=light id="mpt"></label></td>
+						</tr>
+						<!--<tr>
+							<td><label>Autenticação</label></td>
+							<td><label class=light><?if ((le_EEPROM(100,3)) == "S") {sock.setdata("Habilitado");} else{sock.setdata("Desabilitado");} sock.send();?></label></td>
+						</tr>-->
+					</table>
+				</div>
+			</div>
+
+			<div class=blk-wht>
+				<div class=top>
+					<p>Sobre SNMP</p>
+					<i>&#xf010</i>
+				</div>
+				<div class=tbl-rsp>
+					<table>
+						<tr>
+							<td><label>Gerente 1</label></td>
+							<td><label class="light" id="sng1"></label></td>
+						</tr>
+						<tr>
+							<td><label>Gerente 2</label></td>
+							<td><label class=light id="sng2"></label></td>
+						</tr>
+						<tr>
+							<td><label>Porta Agente</label></td>
+							<td><label class=light id="sngp"></label></td>
+						</tr>
+						<tr>
+							<td><label>Porta Trap</label></td>
+							<td><label class=light id="sntp"></label></td>
+						</tr>
+						<tr>
+							<td><label>Comunidade</label></td>
+							<td><label class=light id="sncm"></label></td>
+						</tr>
+						<!-- <tr>
+							<td><label>Versão</label></td>
+							<td><label class=light>
+
+								</label></td>
+						</tr> -->
+					</table>
+				</div>
+			</div>
+
+		</div>
+	</main>
+	<script>
+		//$("#softwareVersion").html(`Versão: ${$.fn.jquery}`);
+		$(document).ready(function () {
+			$.ajax('/systeminfo', {
+				dataType: 'json',
+				timeout: 500,
+				success: (data, status, xhr) => {
+					textFieldsFiller(data);
+				},
+				error: (jqXhr, textStatus, errorMessage) => {
+					console.error(`${errorMessage}`);
+				},
+			});
+			//ABAIXO Codigos vindos do scripts.js do NCC (Ajusta altura dos divs)
+			window.$h = function (e) {
+				var _s = typeof e === 'string' ? document.querySelectorAll(e) : e;
+				if (_s == null) return $h(document.createElement("div"));
+				var ex = {};
+				ex.element = typeof _s === 'object' ? _s[0] : _s;
+				ex.elements = _s;
+				ex.hasClass = function (c) {
+					var has = false;
+					ex.each(function (i, item) { if (item.classList.contains(c) == true) has = true })
+					return has;
+				}
+				ex.removeClass = function (c) {
+					ex.each(function (i, item) {
+						var _c = c.split(' ');
+						for (i in _c) {
+							item.classList.remove(_c[i])
+						}
+					})
+				}
+				ex.addClass = function (c) {
+					ex.each(function (i, item) { item.classList.add(c) })
+				}
+				ex.on = function (n, fn) {
+					ex.each(function (i, item) { item.addEventListener(n, function (event) { fn(event, item) }); })
+				}
+				ex.show = function () { ex.each(function (i, item) { item.style.display = "block" }) }
+				ex.hide = function () { ex.each(function (i, item) { item.style.display = "none" }) }
+				ex.desabilita = function () { ex.each(function (i, item) { item.disabled = true; item.classList.add("desabilitado") }) }
+				ex.habilita = function () { ex.each(function (i, item) { item.disabled = false; item.classList.remove("desabilitado") }) }
+				ex.destaca = function () { ex.each(function (i, item) { item.classList.add("destacar") }) }
+				ex.redestaca = function () { ex.each(function (i, item) { item.classList.remove("destacar") }) }
+				ex.each = function (fn) { if (_s.tagName) { fn(0, _s) } else { for (var i = 0; i < _s.length; i++) { fn(i, _s[i]); } } }
+				ex.find = function (el) { return ex.elements.querySelectorAll(el) }
+				ex.findOne = function (el) { return ex.elements.querySelector(el) }
+				ex.css = function (a, b) {
+
+					if (typeof a == "object") {
+						for (var prop in a) {
+							$h(_s).css(prop, a[prop])
+						}
+					} else {
+						ex.each(function (i, item) {
+							if (typeof b !== 'undefined')
+								item.style[a] = b;
+							else
+								return item.style[a]
+						})
+					}
+				}
+				return ex;
+			}
+
+			//Rodar esse remove no ajax somente se não for GSM.
+			$("#gsm-panel").remove();
+			fixHeight();
+		});
+
+		function fixHeight() {
+			if (typeof conadosHeight === "function")
+				conadosHeight();
+			var _height = 0, items = 0, arr = [];
+			$h(".cntnr .blk-wht").css("height", "auto")
+			$h(".cntnr .blk-wht").each(function (i, item) {
+				if (i == 0)
+					items = parseInt($h(".cntnr").element.clientWidth / $h(item).elements.clientWidth);
+
+				if (i % items == 0) {
+					if (i > 0)
+						arr.push(_height);
+					_height = 0;
+				}
+				_height = Math.max(_height, parseInt($h(item).elements.clientHeight))
+			})
+			arr.push(_height + 5);
+			var ix = -1;
+			$h(".cntnr .blk-wht").each(function (i, item) {
+				if (i % items == 0)
+					ix++;
+
+				$h(item).css("height", arr[ix] + "px");
+			})
+		}
+	</script>
+</body>
+
+</html>

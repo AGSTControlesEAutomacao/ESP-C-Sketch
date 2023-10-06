@@ -1,0 +1,208 @@
+<html lang="pt-br">
+
+<head>
+	<title>Controlador AGST</title>
+	<meta http-equiv="content-type" content="text/html;charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="icon" href="favicon.ico" />
+	<link href="/style.css" rel="stylesheet" />
+	<script src="/jquery-3.6.0.min.js"></script>
+	<script src="/scripts.js"></script>
+</head>
+
+<body>
+	<div class="div-top">
+		<header>
+			<a class=i-menu onclick=openCloseMenu() title=Menu><i>&#xf00b</i></a>
+			<ul class=ul-right>
+				<li><a href=painel.html title="Alertas Ativos"><i>&#xf001</i><span class=ntf></span></a></li>
+				<li><a href=logout.html title=Sair><i>&#xf011</i></a></li>
+			</ul>
+			<nav id="menu-nav">
+			</nav>
+			<script>
+				$(document).ready(function () {
+					ajaxMenu();
+				});
+			</script>
+		</header>
+	</div>
+	<main class="cmds">
+		<div class="cntnr">
+			<div class="tb-cnt">
+				<div class="min-height">
+					<div class="top-pg">
+						<p class="tlt">Upgrade</p>
+					</div>
+					<div class="blk-lft inv">
+						<div class="tbl-rsp">
+							<div id='loader' class="loader" style='display: none;margin-bottom: 8px;width: 100%;'>
+								<div class="loaderBar"></div>
+							</div>
+							<table>
+								<tr>
+									<td><input type="radio" name="upg" value="hex" checked="checked" /></td>
+									<td width="20%"><label>Software Firmware Controlador</label></td>
+									<td>
+										<input type="file" id="hex" name="hex" accept=".hex">
+									</td>
+								</tr>
+								<tr>
+									<td><input type="radio" name="upg" value="ota" /></td>
+									<td><label>Software Aplicativo WEB</label></td>
+									<td>
+										<input type="file" id="bin" name="bin" accept=".bin">
+									</td>
+									<td class="hide-mobile-l"></td>
+								</tr>
+							</table>
+						</div>
+					</div>
+				</div>
+				<div class="btn-box clr">
+					<input class="btn grn" type="submit" id="submit" title="Enviar" value="Enviar"
+						onclick="checkSend()" />
+				</div>
+			</div>
+		</div>
+	</main>
+	<script>
+		let loadedHex;
+		let loadedBin;
+
+		document.getElementById('hex').onchange = (event) => {
+			if (event.target.files && event.target.files[0]) {
+				const reader = new FileReader();
+				reader.onload = event => loadedHex = event.target.result;
+				reader.readAsText(event.target.files[0]);
+			}
+		};
+
+		document.getElementById('bin').onchange = (event) => {
+			if (event.target.files && event.target.files[0]) {
+				const reader = new FileReader();
+				reader.onload = event => loadedBin = event.target.result;
+				reader.readAsArrayBuffer(event.target.files[0]);
+				// loadedBin = Uint8Array.from(loadedBin);
+			}
+		};
+		function checkSend() {
+			$('#loader').show();
+			console.log('ENVIA');
+			let radio = document.getElementsByName('upg');
+			if (radio[0].checked == true) {
+				enviaHex();
+			} else {
+				enviaBin();
+			}
+		}
+		function enviaHex() {
+			if (loadedHex != undefined) {
+				// console.log(`Envia ${loadedHex}`);
+				alert('Mantenha pressionado o botão de acesso no controlador, após pressione OK nesse alerta.\nSolte o botão quando a mensagem BOOTLOADER aparecer no display.');
+				let botao = document.getElementById('submit');
+				botao.value = "Enviando HEX AGUARDE";
+				botao.title = "Enviando HEX AGUARDE";
+				botao.onclick = () => alert('Enviando HEX AGUARDE');
+
+				const xhr = new XMLHttpRequest();
+				xhr.timeout = 0;
+				xhr.open("POST", "./sendhex", true);
+
+				// Send the proper header information along with the request
+				xhr.setRequestHeader("Content-Type", "multipart/form-data");
+				xhr.setRequestHeader('Transfer-Encoding', 'chunked');
+				xhr.ontimeout = () => {
+					alert(`Timeout Resposta`);
+					botao.value = "Enviar";
+					botao.title = "Enviar";
+					botao.onclick = checkSend;
+				};
+				xhr.onprogress = (evt) => {
+					console.log(evt.type);
+				}
+				xhr.onload = (evt) => {
+					//alert(`ReadyStateChange: ${xhr.readyState}\nStatus:${xhr.status}`);
+					// Call a function when the state changes.
+					if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
+						alert('Software Atualizado.');
+					} else if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 401) {
+						alert('Não autorizado');
+					}
+					else if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 500) {
+						alert('Falha de envio');
+					}
+					botao.value = "Enviar";
+					botao.title = "Enviar";
+					botao.onclick = checkSend;
+
+					$('#loader').hide();
+				};
+				xhr.upload.addEventListener("progress", function (event) {
+					if (event.lengthComputable) {
+						let complete = (event.loaded / event.total * 100 | 0);
+						botao.value = `${complete - 21}%`; //Navegador reporta erroneamente e ainda por cima não conta todo tamanho
+						botao.title = `${complete - 21}%`; //Navegador reporta erroneamente e ainda por cima não conta todo tamanho
+					}
+				});
+				xhr.send(loadedHex);
+			}
+		}
+		function enviaBin() {
+			if (loadedBin != undefined) {
+				// console.log(`Envia ${loadedBin}`);
+
+				let botao = document.getElementById('submit');
+				botao.value = "Enviando BIN AGUARDE";
+				botao.title = "Enviando BIN AGUARDE";
+				botao.onclick = () => alert('Enviando BIN AGUARDE');
+
+				const xhr = new XMLHttpRequest();
+				xhr.timeout = 0;
+				xhr.open("POST", "./sendbinary", true);
+
+				// Send the proper header information along with the request
+				xhr.setRequestHeader("Content-Type", "application/octet-stream");
+				xhr.ontimeout = () => {
+					alert(`Timeout Resposta`);
+					botao.value = "Enviar";
+					botao.title = "Enviar";
+					botao.onclick = checkSend;
+				};
+				xhr.onprogress = (evt) => {
+					console.log(evt.type);
+				}
+				xhr.onload = (evt) => {
+					//alert(`ReadyStateChange: ${xhr.readyState}\nStatus:${xhr.status}`);
+					// Call a function when the state changes.
+					if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
+						let resp = confirm("Software atualizado, reiniciar para novo Software?");
+						if (resp) {
+							//TODO: Reboot do ESP.
+						}
+					} else if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 401) {
+						alert('Não autorizado');
+					}
+					else if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 500) {
+						alert('Falha de envio');
+					}
+					botao.value = "Enviar";
+					botao.title = "Enviar";
+					botao.onclick = checkSend;
+
+					$('#loader').hide();
+				};
+				xhr.upload.addEventListener("progress", function (event) {
+					if (event.lengthComputable) {
+						let complete = (event.loaded / event.total * 100 | 0);
+						botao.value = `${complete - 21}%`; //Navegador reporta erroneamente e ainda por cima não conta todo tamanho
+						botao.title = `${complete - 21}%`; //Navegador reporta erroneamente e ainda por cima não conta todo tamanho
+					}
+				});
+				xhr.send(new Uint8Array(loadedBin));
+			}
+		}
+	</script>
+</body>
+
+</html>

@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <title>Controlador AGST</title>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="/favicon.ico" />
+    <link href="/style.css" rel="stylesheet" />
+    <link href="/datatables.min.css" rel="stylesheet">
+    <script src="/jquery-3.6.0.min.js"></script>
+    <script src="/datatables.min.js"></script>
+    <script src="/scripts.js"></script>
+    <style>
+        /* Estilos do div de filtro */
+        .filter-overlay {
+            position: absolute;
+            top: 100px;
+            left: 304px;
+            width: 60%;
+            height: 150px;
+            background-color: rgba(255, 255, 255);
+            border-style: solid;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            display: none;
+        }
+
+        /* Customs */
+        .table-alert {
+            display: flex
+        }
+
+        .table-pnl {
+            width: 75vw;
+            padding: 5px 5px 5px 5px;
+            border: 1px solid #ddd;
+            box-shadow: 2px 2px 5px -1px rgba(0, 0, 0, .46);
+            margin-right: 1%;
+        }
+
+        .alert-pnl {
+            width: 20vw;
+            padding: 0px 5px 0px 5px;
+            border: 1px solid #ddd;
+            box-shadow: 2px 2px 5px -1px rgba(0, 0, 0, .46);
+        }
+
+        .alert-title {
+            font-weight: bold;
+            padding: 0px 2px 0px 2px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="div-top">
+        <header>
+            <a class="i-menu" onclick='openCloseMenu()' title="Menu"><i>&#xf00b</i></a>
+            <ul class="ul-right">
+                <li><a href="painel.html" title="Alertas Ativos"><i>&#xf001</i><span class="ntf"></span></a></li>
+                <li><a href="logout.html" title="Sair"><i>&#xf011</i></a></li>
+            </ul>
+            <nav id="menu-nav">
+            </nav>
+            <script>
+                $(document).ready(function () {
+                    ajaxMenu();
+                });
+            </script>
+        </header>
+    </div>
+
+    <main class="home">
+        <div class="cntnr">
+            <!-- INICIO DO PAINEL SUPERIOR -->
+            <!-- É clonado via JavaScript para economizar espaço na flash -->
+            <div class="pnl-top col-number-7" id="PNL-Z1">
+                <div
+                    style="position: absolute;margin-left: -10px;margin-top: -10px;border: 1px solid #ddd;box-shadow: 2px 2px 5px -1px rgba(0, 0, 0, .46);background-color: #fff">
+                    Z1</div>
+                <div class="pnl-top-blk" style="display: table-row;">
+                    <div class="cntnt">
+                        <p class="tlt"><i class="top"></i> Temperatura Interna</p>
+                        <p name='TI' class="nmbr xx">--°C</p>
+                        <p class="tlt"><span class="red" name="P1toTI">-- °C</span> para meta de Refrigeração
+                        </p>
+                    </div>
+                </div>
+                <div class="pnl-top-blk" style="display: table-row;">
+                    <div class="cntnt">
+                        <p class="tlt"><i class="top"></i> Setpoint Refrigeração</p>
+                        <p name="P1" class="nmbr">--°C</p>
+                        <p class="tlt" title="P3"><span name="P3">-- °C</span> diferencial entre máquinas</p>
+                    </div>
+                </div>
+                <div class="pnl-top-blk" style="display: table-row;">
+                    <div class="cntnt">
+                        <p class="tlt"><i class="top"></i> Setpoint Aquecimento</p>
+                        <p class="nmbr" name="P5">--°C</p>
+                        <p class="tlt" title="P3"><span name="P3">-- °C</span> diferencial entre máquinas</p>
+                    </div>
+                </div>
+                <div class="pnl-top-blk" style="display: table-row;">
+                    <div class="cntnt">
+                        <p class="tlt"><i class="top"></i> Umidade Interna</p>
+                        <p name="UI" class="nmbr xx">--%</p>
+                        <!-- <p class="tlt"><span class="min">--%</span></p> -->
+                    </div>
+                </div>
+                <div class="pnl-top-blk" style="display: table-row;">
+                    <div class="cntnt">
+                        <p class="tlt"><i class="top"></i> Setpoint Desumidificação</p>
+                        <p class="nmbr" name="P14">--%</p>
+                        <p class="tlt" title="P17"><span name="P17">--%</span> diferencial entre máquinas</p>
+                    </div>
+                </div>
+                <div class="pnl-top-blk" style="display: table-row;">
+                    <div class="cntnt">
+                        <p class="tlt"><i class="top"></i> Setpoint Umidificação</p>
+                        <p class="nmbr" name="P18">--%</p>
+                        <p class="tlt" title="P21"><span name="P21">--%</span> diferencial entre máquinas</p>
+                    </div>
+                </div>
+                <div class="pnl-top-blk" style="display: table-row;">
+                    <div class="cntnt">
+                        <p class="tlt"><i class="top"></i> Sequencia de Revezamento <strong name="P31">---h</strong>
+                        </p>
+                        <p class="nmbr" name="REV" style="font-size: 25px;"></span>
+                        <p class="tlt">Faltam <strong name="TREV">---h</strong> para Revezamento</p>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <!-- FIM DO PAINEL SUPERIOR -->
+            <div class="table-alert">
+                <div class="table-pnl">
+                    <table id="customTable" class="display compact nowrap">
+                        <thead>
+                            <tr>
+                                <th data-name="tipo">Tipo</th>
+                                <th data-name="funcao">Função</th>
+                                <th data-name="zona">Zona</th>
+                                <th data-name="maquina">Maquina</th>
+                                <th data-name="es">ES</th>
+                                <th data-name="posicao">Posição</th>
+                                <th data-name="estado">Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th>Tipo</th>
+                                <th>Função</th>
+                                <th>Zona</th>
+                                <th>Maquina</th>
+                                <th>ES</th>
+                                <th>Posição</th>
+                                <th>Estado</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                <div class="alert-pnl">
+                    <p class="alert-title">Alertas Gerais do Sistema</p>
+                    <p id="pnl-alrt-ger" class="pnl-alrt"></p>
+                    <p class="alert-title">Alertas de Zona</p>
+                    <p id="pnl-alrt-zon" class="pnl-alrt"></p>
+                    <p class="alert-title">Alertas de Zona e Maquina</p>
+                    <p id="pnl-alrt-zon-maq" class="pnl-alrt"></p>
+                </div>
+            </div>
+        </div>
+        <div class="loader-overlay" id="loaderOverlay">
+            <div class="table-loader"></div>
+        </div>
+    </main>
+    <script>
+        let dataTable;
+        let fEU = [];
+        let tEU = [];
+        let fED = [];
+        let fSD = [];
+        let fSU = [];
+        let tSU = [];
+        let fGer = [];
+        let fZon = [];
+        let fZonMaq = [];
+
+        let currentZones = 1;
+
+        const hdrTransition = '0.5s';
+        let headers = [];
+
+        function ajaxEU() {
+            return new Promise((resolve, reject) => {
+                $.ajax({
+                    url: "feu.txt",
+                    type: "GET",
+                    dataType: "text",
+                    success: (response) => {
+                        response = response.split("\n");
+                        response.forEach((el) => {
+                            el = el;
+                            fEU.push(el);
+                        });
+
+                        resolve();
+                    },
+                    error: (error) => {
+                        console.error("Erro na requisição AJAX:", error);
+                        reject();
+                    }
+                });
+            });
+        }
+        function ajaxEUType() {
+            return new Promise((resolve, reject) => {
+                $.ajax({
+                    url: "teu.txt",
+                    type: "GET",
+                    dataType: "text",
+                    success: (response) => {
+                        response = response.split("\n");
+                        response.forEach((el) => {
+                            el = el;
+                            tEU.push(el);
+                        });
+
+                        resolve();
+                    },
+                    error: (error) => {
+                        console.error("Erro na requisição AJAX:", error);
+                        reject();
+                    }
+                });
+            });
+
+        }
+
+        function ajaxED() {
+            return new Promise((resolve, reject) => {
+                $.ajax({
+                    url: "fed.txt",
+                    type: "GET",
+                    dataType: "text",
+                    success: (response) => {
+                        response = response.split("\n");
+                        response.forEach((el) => {
+                            el = el;
+                            fED.push(el);
+                        });
+
+                        resolve();
+                    },
+                    error: (error) => {
+                        console.error("Erro na requisição AJAX:", error);
+                        reject();
+                    }
+                });
+            });
+
+        }
+
+        function ajaxSD() {
+            return new Promise((resolve, reject) => {
+                $.ajax({
+                    url: "fsd.txt",
+                    type: "GET",
+                    dataType: "text",
+                    success: (response) => {
+                        response = response.split("\n");
+                        response.forEach((el) => {
+                            el = el;
+                            fSD.push(el);
+                        });
+
+                        resolve();
+                    },
+                    error: (error) => {
+                        console.error("Erro na requisição AJAX:", error);
+                        reject();
+                    }
+                });
+            });
+        }
+
+        function ajaxSU() {
+            return new Promise((resolve, reject) => {
+                $.ajax({
+                    url: "fsu.txt",
+                    type: "GET",
+                    dataType: "text",
+                    success: (response) => {
+                        response = response.split("\n");
+                        response.forEach((el) => {
+                            el = el;
+                            fSU.push(el);
+                        });
+
+                        resolve();
+                    },
+                    error: (error) => {
+                        console.error("Erro na requisição AJAX:", error);
+                        reject();
+                    }
+                });
+            });
+        }
+        function ajaxSUType() {
+            return new Promise((resolve, reject) => {
+                $.ajax({
+                    url: "tsu.txt",
+                    type: "GET",
+                    dataType: "text",
+                    success: (response) => {
+                        response = response.split("\n");
+                        response.forEach((el) => {
+                            el = el;
+                            tSU.push(el);
+                        });
+
+                        resolve();
+                    },
+                    error: (error) => {
+                        console.error("Erro na requisição AJAX:", error);
+                        reject();
+                    }
+                });
+            });
+        }
+
+        function ajaxFG() {
+            return new Promise((resolve, reject) => {
+                $.ajax({
+                    url: "flagsgerais.txt",
+                    type: "GET",
+                    dataType: "text",
+                    success: (response) => {
+                        response = response.split("\n");
+                        response.forEach((el) => {
+                            el = el;
+                            fGer.push(el);
+                        });
+
+                        resolve();
+                    },
+                    error: (error) => {
+                        console.error("Erro na requisição AJAX:", error);
+                        reject();
+                    }
+                });
+            });
+        }
+        function ajaxFZ() {
+            return new Promise((resolve, reject) => {
+                $.ajax({
+                    url: "flagszon.txt",
+                    type: "GET",
+                    dataType: "text",
+                    success: (response) => {
+                        response = response.split("\n");
+                        response.forEach((el) => {
+                            el = el;
+                            fZon.push(el);
+                        });
+
+                        resolve();
+                    },
+                    error: (error) => {
+                        console.error("Erro na requisição AJAX:", error);
+                        reject();
+                    }
+                });
+            });
+        }
+        function ajaxFZM() {
+            return new Promise((resolve, reject) => {
+                $.ajax({
+                    url: "flagszonmaq.txt",
+                    type: "GET",
+                    dataType: "text",
+                    success: (response) => {
+                        response = response.split("\n");
+                        response.forEach((el) => {
+                            el = el;
+                            fZonMaq.push(el);
+                        });
+
+                        resolve();
+                    },
+                    error: (error) => {
+                        console.error("Erro na requisição AJAX:", error);
+                        reject();
+                    }
+                });
+            });
+        }
+
+
+
+        /**
+         * @param {Array} listToAdd - Array com os objetos a adicionar na tabela
+         * @param {Array} typeNames - Array com os nomes dos tipos (enviar undefined se não possuir)
+         * @param {Array} funcNames - Array com os nomes das funcoes
+         * @param {String} esName - Texto para adicionar na coluna "ES"
+         * @param {Object} valNames - Objeto que contenha os "remapemantos" dos valores (enviar undefined se não possuir)
+         */
+        function addToTable(listToAdd, typeNames, funcNames, esName, valNames) {
+            listToAdd.forEach((el, i) => {
+                if (el.fun == 0) return;
+
+                let row = [];
+                let func = funcNames[el.fun];
+                let contZon = func.includes('Z%') ? true : false;
+                let contMaq = func.includes('Maq#') ? true : false;
+                func = func.replaceAll('Z%', '').replaceAll('Maq#', '');
+
+
+                row.push(typeNames == undefined ? "-" : typeNames[el.tp]);
+                row.push(func);
+                row.push(contZon ? (el.zon + 1) : '-');
+                row.push(contMaq ? (el.maq + 1) : '-');
+                row.push(esName);
+                row.push((i + 1).toString().padStart(2, '0'));
+                row.push(valNames == undefined ? el.val : valNames[el.val]);
+
+                dataTable.row.add(row);
+            });
+        }
+
+        function ajaxOnline() {
+            return new Promise((resolve, reject) => {
+                $.ajax({
+                    url: "online",
+                    type: "GET",
+                    dataType: "json",
+                    success: function (response) {
+                        for (let i = 0; i < response.HABZONAS; i++) {
+                            let revHtml = '';
+                            response.ZONAS[i].REV.forEach((el, j) => {
+                                let bgColor = '#DFDFDF';
+                                // let fontColor = '#656565'
+                                if (j == 0) {
+                                    bgColor = '#009BBE';
+                                    // fontColor = '#FFF';
+                                }
+                                else if (j < response.ZONAS[i].P25) {
+                                    bgColor = '#5E5E5E';
+                                    // fontColor = '#FFF';
+                                }
+
+                                if (j < response.ZONAS[i].P24)
+                                    revHtml += `<span style="padding:1px;color:#FFF;border:1px solid ${bgColor};border-radius:7px;box-shadow:2px 2px 5px -1px rgba(0, 0, 0, .46);background-color:${bgColor};">${el + 1}</span> `;
+                            });
+                            revHtml = revHtml.substring(0, revHtml.length - 1); //Tira espaço do fim
+                            $(`#PNL-Z${i + 1} [name="REV"]`).html(revHtml);
+                            $(`#PNL-Z${i + 1} [name="TREV"]`).text(`${Math.floor(response.ZONAS[i].TREV / 60)}h`);
+
+                            let p1ToUi = (response.ZONAS[i].P1 - response.ZONAS[i].TI) / 10;
+                            if (p1ToUi > 0) {
+                                p1ToUi = `+${p1ToUi}`;
+                            }
+                            $(`#PNL-Z${i + 1} [name="P1toTI"]`).text(`${p1ToUi}°C`);
+
+
+                            for (let p = 1; p <= 11; p++) {
+                                if (response.ZONAS[i][`P${p}`] != undefined)
+                                    $(`#PNL-Z${i + 1} [name="P${p}"]`).text(`${response.ZONAS[i][`P${p}`] / 10}°C`);
+                            }
+                            for (let p = 14; p <= 23; p++) {
+                                if (response.ZONAS[i][`P${p}`] != undefined)
+                                    $(`#PNL-Z${i + 1} [name="P${p}"]`).text(`${response.ZONAS[i][`P${p}`]}%`);
+                            }
+
+                            $(`#PNL-Z${i + 1} [name="P24"]`).text(`${response.ZONAS[i].P24}`);
+                            $(`#PNL-Z${i + 1} [name="P25"]`).text(`${response.ZONAS[i].P25}`);
+
+                            $(`#PNL-Z${i + 1} [name="P31"]`).text(`${response.ZONAS[i].P31}h`);
+
+                            $(`#PNL-Z${i + 1} [name="TI"]`).text(`${response.ZONAS[i].TI / 10}°C`);
+                            $(`#PNL-Z${i + 1} [name="UI"]`).text(`${response.ZONAS[i].UI}%`);
+                        }
+                        currentZones = response.HABZONAS;
+
+                        let page = dataTable.page(); //Pega a pagina atual pra no refresh não se perder
+                        dataTable.rows().clear();
+
+                        addToTable(response.EU, tEU, fEU, "Entrada Universal", undefined);
+                        addToTable(response.ED, undefined, fED, "Entrada Digital", { true: "EL", false: "ED" });
+                        addToTable(response.SD, undefined, fSD, "Saída Digital", { true: "SL", false: "SD" });
+                        addToTable(response.SU, tSU, fSU, "Saída Universal", undefined);
+
+                        dataTable.rows().invalidate().draw(); //Pra dar refresh na tabela.
+                        dataTable.page(page).draw('page'); //Coloca de volta na pagina escolhida pelo usuario.
+
+                        //Preenche os alarmes.
+                        let pnlAlertaG = $("#pnl-alrt-ger");
+                        pnlAlertaG.html('');
+                        let pnlAlertaZ = $("#pnl-alrt-zon");
+                        pnlAlertaZ.html('');
+                        let pnlAlertaZM = $("#pnl-alrt-zon-maq");
+                        pnlAlertaZM.html('');
+                        let ulG = $('<ul></ul>')
+                        let ulZ = $('<ul></ul>')
+                        let ulZM = $('<ul></ul>')
+
+                        let tmpList = [];
+                        for (let el of response.FGER) {
+                            for (let i = 0; i < 8; i++) {
+                                tmpList.push((el >> i) & 1);
+                            }
+                        }
+                        for (let i = 0; i < tmpList.length; i++) {
+                            if (tmpList[i] == 1)
+                                ulG.append($(`<li style="color: #FFA500;">${fGer[i]}</li>`));
+                        }
+
+                        tmpList = [];
+                        for (let el of response.FZ) {
+                            for (let i = 0; i < 8; i++) {
+                                tmpList.push((el >> i) & 1);
+                            }
+                        }
+                        for (let i = 0; i < tmpList.length; i += 8) {
+                            for (let zona = 0; zona < 4; zona++) {
+                                let alTmp = tmpList[i + zona];
+                                if (alTmp == 1) {
+                                    alTmp = fZon[i / 8].replaceAll('Z%', `Z${zona + 1}`);
+                                    ulZ.append($(`<li style="color: #FFA500;">${alTmp}</li>`));
+                                }
+                            }
+                        }
+
+                        tmpList = [];
+                        for (let el of response.FZM) {
+                            for (let i = 0; i < 8; i++) {
+                                tmpList.push((el >> i) & 1);
+                            }
+                        }
+                        for (let i = 0; i < tmpList.length; i += 32) {
+                            for (let zona = 0; zona < 4; zona++) {
+                                for (let maq = 0; maq < 8; maq++) {
+                                    let alTmp = tmpList[i + (8 * zona) + maq];
+                                    if (alTmp == 1) {
+                                        alTmp = fZonMaq[Math.floor(i / 32)].replaceAll('Z%', `Z${zona + 1}`).replaceAll('Maq#', `Maq ${maq + 1}`);
+                                        ulZM.append($(`<li style="color: #FFA500;">${alTmp}</li>`));
+                                    }
+                                }
+                            }
+                        }
+
+                        pnlAlertaG.append(ulG);
+                        pnlAlertaZ.append(ulZ);
+                        pnlAlertaZM.append(ulZM);
+
+                        $("#loaderOverlay").hide();
+
+                        //Recarrega os dados a cada 8s
+                        setTimeout(() => {
+                            ajaxOnline();
+                        }, 8000);
+                        resolve();
+                    },
+                    statusCode: {
+                        401: () => {
+                            $("#loaderOverlay").show();
+                            alert("Sessão Encerrada, realize login novamente."); //Tambem é possivel redirecionar o usuario para a pagina atual para forçar o login.
+                            reject();
+                        },
+                        403: () => {
+                            $("#loaderOverlay").show();
+                            alert("Sem acesso, realize login novamente."); //Tambem é possivel redirecionar o usuario para a pagina atual para forçar o login.
+                            reject();
+                        },
+                        500: () => {
+                            //Tenta recarregar os dados novamente, pode ser que o Controlador esta reiniciando.
+                            $("#loaderOverlay").show();
+                            setTimeout(() => {
+                                ajaxOnline();
+                            }, 1000);
+                            reject();
+                        }
+                    },
+                    error: (error) => {
+                        $("#loaderOverlay").show();
+                        console.error("Erro na requisição AJAX:", error);
+                        if (error.status != 401 && error.status != 403 && error.status != 500)
+                            setTimeout(() => {
+                                ajaxOnline();
+                            }, 1000);
+                        reject();
+                    }
+                });
+            });
+        }
+
+        function refreshHeaders() {
+            const transitionOrder = [1, 2, 3, 0];
+            const transitionTime = parseFloat(hdrTransition) * 1000; //Mesmo com o 's' no fim da variavel hdrTransition ele consegue dar parse
+            let hide = 0;
+            let show = 1;
+
+            if (currentZones == 1) { //Só tem uma zona então não faz nada.
+                if (headers[0].is(":hidden")) { //A menos que o header da zona 1 não esteja em exibição, dai tira os outros e deixa só o da zona 1
+                    for (let i = 1; i < 4; i++) {
+                        headers[i].css('opacity', 0);
+                    }
+                    setTimeout(() => {
+                        for (let i = 1; i < 4; i++)
+                            headers[i].hide();
+                        headers[0].show();
+                        headers[0].css('opacity', 1);
+                    }, transitionTime);
+                }
+                return;
+            }
+
+            for (let i = 0; i < 4; i++) {
+                if (headers[i].is(":visible")) {
+                    hide = i;
+                    show = transitionOrder[i];
+                    if ((show + 1) > currentZones)
+                        show = 0; //Se a zona não existir loopa de volta pra primeira
+
+                    break; //Se achou o visivel já não precisa rodar o resto do FOR.
+                }
+            }
+
+            if (headers[hide].is(':hover'))
+                return; //Se estiver com o mouse em cima mantem na tela até a proxima iteração pro usuario conseguir ler
+
+            headers[hide].css('opacity', 0);
+            setTimeout(() => {
+                headers[hide].hide();
+                headers[show].show();
+                headers[show].css('opacity', 1);
+            }, transitionTime);
+        }
+
+        $(document).ready(async function () {
+            $("#loaderOverlay").show();
+
+            //Clona o "cabeçalho para completar 4 zonas."
+            let header = $('#PNL-Z1');
+            let latest = header;
+            for (let i = 1; i < 4; i++) {
+                let newHeader = header.clone(true, true);
+                $(newHeader.children()[0]).text(`Z${i + 1}`); //Melhorar abordagem.
+                newHeader.attr("id", `PNL-Z${i + 1}`);
+                newHeader.insertAfter(latest);
+                latest = newHeader;
+            }
+
+            headers = [$('#PNL-Z1'), $('#PNL-Z2'), $('#PNL-Z3'), $('#PNL-Z4')];
+            headers[0].css('transition', `opacity ${hdrTransition} ease-in-out`);
+            for (let i = 1; i < 4; i++) {
+                headers[i].css('opacity', 0);
+                headers[i].css('transition', `opacity ${hdrTransition} ease-in-out`);
+                headers[i].hide();
+            }
+
+            dataTable = new DataTable('#customTable', {
+                //responsive: true,
+                dom: 'Bfrtip',
+                buttons: [
+                    'pageLength',
+                    {
+                        extend: 'colvis',
+                        // className: 'btn',
+                        text: 'Filtrar Colunas'
+                    },
+                    {
+                        extend: 'collection',
+                        // className: 'btn',
+                        text: 'Filtragem',
+                        buttons: [
+                            {
+                                text: 'Somente Entradas',
+                                action: function (e, dt, node, config) {
+                                    dataTable.column("es:name").search("Entrada").draw();
+                                }
+                            },
+                            {
+                                text: 'Somente Entradas Universais',
+                                action: function (e, dt, node, config) {
+                                    dataTable.column("es:name").search("Entrada Universal").draw();
+                                }
+                            },
+                            {
+                                text: 'Somente Entradas Digitais',
+                                action: function (e, dt, node, config) {
+                                    dataTable.column("es:name").search("Entrada Digital").draw();
+                                }
+                            },
+                            {
+                                text: 'Somente Saídas',
+                                action: function (e, dt, node, config) {
+                                    dataTable.column("es:name").search("Saída").draw();
+                                }
+                            },
+                            {
+                                text: 'Somente Saídas Universais',
+                                action: function (e, dt, node, config) {
+                                    dataTable.column("es:name").search("Saída Universal").draw();
+                                }
+                            },
+                            {
+                                text: 'Somente Saídas Digitais',
+                                action: function (e, dt, node, config) {
+                                    dataTable.column("es:name").search("Saída Digital").draw();
+                                }
+                            },
+                            {
+                                text: 'Exibir Tudo',
+                                action: function (e, dt, node, config) {
+                                    dataTable.column("es:name").search("").draw();
+                                }
+                            },
+                            {
+                                text: 'Alterar Agrupamento',
+                                action: function (e, dt, node, config) {
+                                    if (dataTable.rowGroup().enabled())
+                                        dataTable.rowGroup().disable().draw();
+                                    else
+                                        dataTable.rowGroup().enable().draw();
+                                }
+                            },
+                        ]
+                    }
+                ],
+                rowGroup: {
+                    dataSrc: 4
+                },
+                lengthMenu: [[25, 50, 75, 100, -1], [25, 50, 75, 100, "Todas"]],
+                order: [[4, 'asc'], [2, 'asc'], [3, 'asc']], //Ordena por io > zona > maquina
+                columnDefs: [
+                    {
+                        targets: 6,
+                        // data: 'estado',
+                        render: (data, type, row, meta) => {
+                            if (type == 'display') {
+                                if (row[4].includes('Digital')) {
+                                    let toReturn = '<i class="';
+                                    if (data.includes('E')) {
+                                        toReturn += 'ED '
+                                    }
+                                    if (data.includes('S')) {
+                                        toReturn += 'SD '
+                                    }
+                                    if (data.includes('L')) {
+                                        toReturn += 'green'
+                                    }
+                                    toReturn += `">${data.replaceAll('E', '').replaceAll('S', '').replaceAll('L', '').replaceAll('D', '')}</i>`
+                                    return toReturn
+                                }
+                                else {
+                                    if (row[0] == tSU[4] || row[0] == tEU[0]) {
+                                        return data / 10;
+                                    }
+                                }
+                            }
+                            return data;
+                        }
+                    },
+                ],
+                language: dataTableTranslation(true),
+            });
+            //Troca a classe dos botões pra ficar no padrão do sistema.
+            $('[class="dt-button buttons-collection buttons-page-length"]').attr('class', 'btn wht')
+            $('[class="dt-button buttons-collection buttons-colvis"]').attr('class', 'btn wht');
+            $('[class="dt-button buttons-collection"]').attr('class', 'btn wht');
+
+            //TODO: Proteção contra falha de entregas.
+            await ajaxEU();
+            await ajaxEUType();
+            await ajaxED();
+            await ajaxSD();
+            await ajaxSU();
+            await ajaxSUType();
+            await ajaxFG();
+            await ajaxFZ();
+            await ajaxFZM();
+
+            await ajaxOnline();
+            headerRefresher = setInterval(refreshHeaders, 5000);
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,15 @@
+Sem Funcao
+Telemetria Temp. Interna Z%
+Telemetria Temp. Retorno Z% Maq#
+Telemetria Temp. Insufla. Z% Maq#
+Telemetria Temp. Externa Z%
+Telemetria Umid. Interna Z%
+Telemetria Umid. Externa Z%
+Telemetria Umid. Retorno Z% Maq#
+Modulo Potencia Aquecimento Z% Maq#
+Modulo Potencia Umidificacao Z% Maq#
+Fancoil Refrigera Z% Maq#
+Controla Pressao D'agua Z% Maq#
+Controla Pressao Ar Z% Maq#
+Controla Temp. Agua Torre Z% Maq#
+Controla Pressao D'agua Bac Z% Maq#

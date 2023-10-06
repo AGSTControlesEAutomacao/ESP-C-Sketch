@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+	<title>Controlador AGST</title>
+	<meta http-equiv="content-type" content="text/html;charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="icon" href="favicon.ico" />
+	<link href="/style.css" rel="stylesheet" />
+	<link href="/datatables.min.css" rel="stylesheet">
+	<script src="/jquery-3.6.0.min.js"></script>
+	<script src="/datatables.min.js"></script>
+	<script src="/scripts.js"></script>
+	<style>
+		.dataloader {
+			display: none;
+			height: 4px;
+			background-color: #BC0922;
+			top: 0;
+			left: 0;
+			width: 0;
+			/* Inicialmente não visível */
+			transition: width 0.3s ease-in-out;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="div-top">
+		<header>
+			<a class=i-menu onclick=openCloseMenu() title=Menu><i>&#xf00b</i></a>
+			<ul class=ul-right>
+				<li><a href=painel.html title="Alertas Ativos"><i>&#xf001</i><span class=ntf></span></a></li>
+				<li><a href=logout.html title=Sair><i>&#xf011</i></a></li>
+			</ul>
+			<nav id="menu-nav">
+			</nav>
+			<script>
+				$(document).ready(function () {
+					ajaxMenu();
+				});
+			</script>
+		</header>
+	</div>
+	<main class=hist>
+		<form action="" method=post>
+			<div class=cntnr>
+				<div class=tb-cnt>
+					<div class=top-pg>
+						<p class=tlt>Histórico</p>
+						<div class="btn-box">
+						</div>
+					</div>
+					<div class="tbl-rsp">
+						<div id='loader' class="loader" style='display: none;margin-bottom: 8px;width: 100%;'>
+							<div class="loaderBar"></div>
+						</div>
+						<table id="historico" class="display compact" style="width:100%">
+							<thead>
+								<tr>
+									<th>Descrição</th>
+									<th>Zona</th>
+									<th>Maquina</th>
+									<th>Data</th>
+									<th>Hora</th>
+									<th>Tipo</th>
+								</tr>
+							</thead>
+							<tbody>
+							</tbody>
+							<tfoot>
+								<tr>
+									<th>Descrição</th>
+									<th>Zona</th>
+									<th>Maquina</th>
+									<th>Data</th>
+									<th>Hora</th>
+									<th>Tipo</th>
+								</tr>
+							</tfoot>
+						</table>
+					</div>
+				</div>
+			</div>
+		</form>
+	</main>
+	<script>
+		const logType = ["Falha", "Evento"];
+		var last = {
+			event: 1,
+			fail: 1
+		};
+		var logs = [];
+		var allLogs = [];
+		var requestingData = false;
+		var dataTable;
+
+		function ajaxLogs() {
+			return new Promise((resolve, reject) => {
+				$.ajax({
+					url: "logs.txt",
+					type: "GET",
+					dataType: "text",
+					success: (response) => {
+						response = response.split("\n");
+						response.forEach((el) => {
+							el = el;
+							logs.push(el);
+						});
+						resolve();
+					},
+					statusCode: {
+						401: () => {
+							alert("Sessão Encerrada, realize login novamente."); //Tambem é possivel redirecionar o usuario para a pagina atual para forçar o login.
+							reject();
+						},
+						403: () => {
+							alert("Sem acesso, realize login novamente."); //Tambem é possivel redirecionar o usuario para a pagina atual para forçar o login.
+							reject();
+						},
+						500: () => {
+							//Tenta recarregar os dados novamente, pode ser que o Controlador esta reiniciando.
+							setTimeout(() => {
+								ajaxLogs();
+							}, 1000);
+							reject();
+						}
+					},
+					error: (error) => {
+						console.error("Erro na requisição AJAX:", error);
+					}
+				});
+			})
+
+		}
+
+		function ajaxLogData(type = 1, start = 1, qtd = 1) {
+			return new Promise((resolve, reject) => {
+				$.ajax({
+					url: `logs?type=${type}&start=${start}&qtd=${qtd}`,
+					type: "GET",
+					dataType: "json",
+					success: (response) => {
+						let toResolve = [];
+						// allLogs = [...allLogs, ...response];
+						for (let el of response) {
+							el.TYPE = logType[type - 1];
+							if (el.DATETIME != "2000-00-00T00:00:00") {
+								allLogs.push(el);
+								toResolve.push(el);
+							}
+						}
+						resolve(toResolve);
+					},
+					statusCode: {
+						401: () => {
+							alert("Sessão Encerrada, realize login novamente."); //Tambem é possivel redirecionar o usuario para a pagina atual para forçar o login.
+							reject();
+						},
+						403: () => {
+							alert("Sem acesso, realize login novamente."); //Tambem é possivel redirecionar o usuario para a pagina atual para forçar o login.
+							reject();
+						},
+						500: () => {
+							// setTimeout(() => {
+							//     ajaxLogData();
+							// }, 1000);
+							reject();
+						}
+					},
+					error: (error) => {
+						console.error("Erro na requisição AJAX:", error);
+					}
+				});
+			})
+		}
+		async function requestData() {
+			if (!requestingData) {
+				let page = dataTable.page(); //Pega a pagina em exibição.
+				requestingData = true;
+				// dataTable.rows().clear();
+				if (last.event != -1)
+					await ajaxLogData(1, last.event, 15).then((rep) => {
+						if (rep.length < 15)
+							last.event = -1;
+						else
+							last.event += 15;
+						addToTable(rep);
+					});
+
+				if (last.fail != -1)
+					await ajaxLogData(2, last.fail, 15).then((rep) => {
+						if (rep.length < 15)
+							last.fail = -1;
+						else
+							last.fail += 15;
+						addToTable(rep);
+					});
+				// addToTable(allLogs);
+				dataTable.rows().invalidate().draw(); //Pra dar refresh na tabela.
+				dataTable.page(page).draw('page'); //Coloca de volta na pagina escolhida pelo usuario.
+				requestingData = false;
+			}
+		}
+		function backgroundRequest() {
+			requestData(); //Fica pedindo a cada 500ms até não ter mais o que pedir.
+			if (last.event != -1 || last.fail != -1) {
+				setTimeout(backgroundRequest, 20);
+			}
+			else {
+				$('#loader').css("display", "none"); //Tira o loader
+			}
+		}
+
+		function addToTable(listToAdd = []) {
+			listToAdd.forEach((el, i) => {
+				// if (el.fun == 0) return;
+				let row = [];
+				let event = logs[el.EVT];
+				let contZon = event.includes('Z%') ? true : false;
+				let contMaq = event.includes('Maq#') ? true : false;
+				event = event.replaceAll('Z%', '').replaceAll('Maq#', '');
+
+				row.push(event);
+				row.push(contZon ? (el.ZON + 1) : '-');
+				row.push(contMaq ? (el.MAQ + 1) : '-');
+				// row.push(el.DATETIME.split('T')[0].split('-').reverse().join('/')); //Sem dar o reverse talvez a organização fique na ordem certa.
+				row.push(el.DATETIME.split('T')[0].replaceAll('-', '/')); //Sem reverse, data fica ao "contrario"
+				row.push(el.DATETIME.split('T')[1]);
+				row.push(el.TYPE);
+
+				dataTable.row.add(row);
+			});
+		}
+
+		$(document).ready(async function () {
+			$('#loader').css("display", ""); //Mostra o loader
+			dataTable = new DataTable('#historico', {
+				//responsive: true,
+				dom: 'Bfrtip',
+				buttons: [
+					'pageLength',
+					'colvis',
+					'excelHtml5',
+					'print',
+				],
+				lengthMenu: [[25, 50, 75, 100, -1], [25, 50, 75, 100, "Todos"]],
+				order: [[3, 'desc'], [4, 'desc']], //Ordena por Data > Hora
+				language: dataTableTranslation(),
+			});
+			//Troca a classe dos botões pra ficar no padrão do sistema.
+			$('[class="dt-button buttons-collection buttons-page-length"]').attr('class', 'btn wht')
+			$('[class="dt-button buttons-collection buttons-colvis"]').attr('class', 'btn wht');
+			$('[class="dt-button buttons-excel buttons-html5"]').attr('class', 'btn');
+			$('[class="dt-button buttons-print"]').attr('class', 'btn hvy');
+
+			await ajaxLogs();
+
+			backgroundRequest();
+		});
+	</script>
+</body>
+
+</html>

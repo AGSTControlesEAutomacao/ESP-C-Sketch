@@ -1,0 +1,143 @@
+Sem Funcao
+Fluxo De Ar Z% Maq#
+Ventilador 1 Evaporador Z% Maq#
+Ventilador 2 Evaporador Z% Maq#
+Compressor 1 Z% Maq#
+Compressor 2 Z% Maq#
+Compressor 3 Z% Maq#
+Alimentacao Z% Maq#
+Grupo Motor Gerador 
+Sistema Em Automatico 
+Falha Rede Geral 
+Termostato De Seguranca Z% Maq#
+Alarme Incendio 1 
+Status Maquina Z% Maq#
+Falha Inversor 
+Status Umidificador Z% Maq#
+Status Resistencia 1 Z% Maq#
+Status Resistencia 2 Z% Maq#
+St Resistencia Duto 1 Z% 
+St Resistencia Duto 2 Z% 
+Nivel De Agua No Duto Z% 
+Umidificador Duto Z% 
+Alarme Umidificador Z% Maq#
+Status Resistencia 3 Z% Maq#
+G.m.g. Bloq.zonas Z%
+G.m.g. Bloq.cargas Z%
+G.m.g. Bloq.maq.aux Z%
+G.m.g. Bloq. Cargas Geral 
+G.m.g. Bloq. Maq. Aux Geral 
+Maquina Em Automatico Z% Maq#
+Zona Em Automatico Z%
+Falha De Rede Na Zona Z%
+Termostato Seguranca Zona Z%
+Termostato Seguranca Geral 
+Incendio Na Zona Z%
+Status Fluxo De Agua Z% Maq#
+Falha Inversor Individual Z% Maq#
+Falha Inversor Por Zona Z%
+Resumo De Bloqueio Z% Maq#
+St Resistencia Duto 3 Z% Maq#
+Falha De Agua Na Torre Z% Maq#
+Falha De Agua Na Zona Z%
+Falha De Agua Geral 
+Bloqueia Maquina Z% Maq#
+Filtro Sujo Z% Maq#
+Pressao Alta 1 Z% Maq#
+Pressao Baixa 1 Z% Maq#
+Resumo De Falha Z% Maq#
+Status Insuflador Z%
+Perda Pressao Max. No Filtro Z% Maq#
+Perda Pressao Min. No Filtro Z% Maq#
+Filtro De Ar Externo Sujo Z% Maq#
+Alarme Incendio 2 Z%
+Porta Aberta 
+Porta Aberta Emergencia 
+Sensor Presenca Area 1 
+Sensor Presenca Area 2 
+Status Hab. Maquina Z% Maq#
+Pressao Alta 2 Z% Maq#
+Pressao Baixa 2 Z% Maq#
+Ventilador Condensador Z% Maq#
+Dumper Retorno Z% Maq#
+Sts. Damper Cf Insfl. 1 
+Sts. Damper Cf Insfl. 2 
+Sts. Damper Cf Insfl. 3 
+Sts. Damper Cf Insfl. 4 
+Sts. Damper Cf Insfl. 5 
+Sts. Damper Cf Insfl. 6 
+Sts. Damper Cf Insfl. 7 
+Sts. Damper Cf Insfl. 8 
+Sts. Damper Cf Insfl. 9 
+Sts. Damper Cf Insfl. 10 
+Sts. Damper Cf Insfl. 11 
+Sts. Damper Cf Insfl. 12 
+Sts. Damper Cf Insfl. 13 
+Sts. Damper Cf Insfl. 14 
+Sts. Damper Cf Insfl. 15 
+Sts. Damper Cf Insfl. 16 
+Sts. Damper Cf Retorno 1 
+Sts. Damper Cf Retorno 2 
+Sts. Damper Cf Retorno 3 
+Sts. Damper Cf Retorno 4 
+Sts. Damper Cf Retorno 5 
+Sts. Damper Cf Retorno 6 
+Sts. Damper Cf Retorno 7 
+Sts. Damper Cf Retorno 8 
+Sts. Damper Cf Retorno 9 
+Sts. Damper Cf Retorno 10 
+Sts. Damper Cf Retorno 11 
+Sts. Damper Cf Retorno 12 
+Sts. Damper Cf Retorno 13 
+Sts. Damper Cf Retorno 14 
+Sts. Damper Cf Retorno 15 
+Sts. Damper Cf Retorno 16 
+Status Gerador 
+Bloqueia Maquina Z%
+Status Fluxo Dagua Zona Z%
+Cag Em Automatico Z% Maq#
+Cag Em Automatico Z%
+Bag Primaria Em Automatico Z% Maq#
+Bag Primaria Em Automatico Z%
+Bag Secundaria Em Automatico Z% Maq#
+Bag Secundaria Em Automatico Z%
+Status Tanque Expanasao 
+Status Chiller D'agua Gelada Z% Maq#
+Staus Fluxo D'agua Cag Z% Maq#
+Bloqueio_geral Cag 
+Sts.fluxo D'agua Bag Primaria 
+Sta_fluxo_agua_bag_sec 
+Status Bag Primaria Z% Maq#
+Status Bag Secundaria Z% Maq#
+Status Sobrecarga Cag Z% Maq#
+Sts.sobrecarga Bag Primaria Z% Maq#
+Sts.sobrecarga Bag Secundaria Z% Maq#
+Defeito Cag Z% Maq#
+Limpa Defeito Remoto 
+Maquinas Em Standby Z% 
+Valvula Condensacao Z% Maq#
+Torre Em Automatico Z% Maq#
+Torre Em Automatico Z%
+Bac Em Automatico Z% Maq#
+Bac Em Automatico Z% 
+Status Da Torre Z% Maq#
+Status Fluxo D'agua Torre Z% Maq#
+Bloqueio Geral Torre 
+Status Fluxo D'agua Bac 
+Status Bac Z% Maq#
+Sts. Sobrecarga Torre Z% Maq#
+Sts. Sobrecarga Bac Z% Maq#
+Defeito Torre Z% Maq#
+Nivel Baixo D'agua 
+Nivel Critico D'agua 
+Nivel Baixo D'agua Torre Z% Maq#
+Nivel Critico D'agua Torre Z% Maq#
+Valvula Entrada D'agua Torre Z% Maq#
+Valvula Saida D'agua Torre Z% Maq#
+Bomba Rep. Em Automatico Z% Maq#
+Nivel Normal D'agua 
+Status Bomba Rep. Z% Maq#
+Compressor 1 & Reset.vent. Z% Maq#
+Compressor 2 & Reset.vent. Z% Maq#
+Compressor 3 & Reset.vent. Z% Maq#
+Status Damper Fancoil Z% Maq#

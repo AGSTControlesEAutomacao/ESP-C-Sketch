@@ -1,0 +1,8 @@
+0-5V
+0-10V
+2-10V
+4-20ma
+Temperatura
+Umidade
+Digital High
+Digital Low

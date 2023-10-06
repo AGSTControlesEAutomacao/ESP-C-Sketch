@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+	<title>Controlador AGST</title>
+	<meta http-equiv="content-type" content="text/html;charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="icon" href="/favicon.ico" />
+	<link href="/style.css" rel="stylesheet" />
+	<script src="/jquery-3.6.0.min.js"></script>
+	<script src="/scripts.js"></script>
+</head>
+
+<body>
+	<div class="div-top">
+		<header>
+			<a class="i-menu" onclick='openCloseMenu()' title="Menu"><i>&#xf00b</i></a>
+			<ul class="ul-right">
+				<li><a href="painel.html" title="Alertas Ativos"><i>&#xf001</i><span class="ntf"></span></a></li>
+				<li><a href="logout.html" title="Sair"><i>&#xf011</i></a></li>
+			</ul>
+			<nav id="menu-nav">
+			</nav>
+			<script>
+				$(document).ready(function () {
+					ajaxMenu();
+				});
+			</script>
+		</header>
+	</div>
+	<main class=alerts>
+		<div class=cntnr>
+			<div class=tb-cnt>
+				<div style=display:none>
+					<table>
+						<tr class="alerta-template">
+							<td class=col>
+								<input readonly type="text" name="id[n]" class="lst n1" maxlength="25"
+									pattern="[A-z0-9 ]{4,25}" value={0} />
+							</td>
+							<td class=col>
+								<input readonly type="text" name="e[n]" class="lst n2" value="{1}" title="{4}" />
+							</td>
+							<td class=col>
+								<input readonly type="text" name="t[n]" class="lst n3" value="{2}" />
+							</td>
+							<td class=col>
+								<div class="btn-box">
+									<a class="btn red" href="" title="Remover">Remover</a>
+								</div>
+							</td>
+						</tr>
+					</table>
+				</div>
+				<div class="informbox"
+					style="margin-bottom: 10px;border: 1px solid #95C8FF;border-radius: 5px;color: #676767;font-weight: bold;padding: 5px;">
+					Selecione ou adicione um grupo para iniciar.
+				</div>
+				<div class="blk-lft">
+					<ul class="lst-wht" id="alertcheckboxes">
+						<li><input type="checkbox" name="chkboxSelAll" id="chkboxSelAll"
+								onclick="selectAll(this)"><label>Selecionar Tudo</label></li>
+					</ul>
+				</div>
+				<div class="blk-rgt">
+					<!-- <form action="" onsubmit="return validaForms(this);" method=post> -->
+					<div class=tbl-rsp>
+						<div>
+							<div>
+								<div class=col>
+									<label for=txtNome>Grupo</label>
+								</div>
+								<div class=col>
+									<input class=full type=text id=txtId disabled />
+								</div>
+							</div>
+							<div>
+								<div class=col>
+									<label for=txtEmails>E-mails</label>
+								</div>
+								<div class=col>
+									<input class=full type=text id=txtEmails onkeyup="updateEmail(this)" maxlength=140
+										pattern="^([a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,4})$"
+										onblur="updateEmail(this)" onfocus="this.select()"
+										placeholder="seuemail@dominio.com.br"
+										title="Para mais de um destinatário separe-os com ;" />
+								</div>
+							</div>
+							<div>
+								<div class=col>
+									<label for=txtTelefones>Telefones</label>
+								</div>
+								<div class=col>
+									<input class=full type=text id=txtTelefones onkeyup="updateTel(this)" maxlength="36"
+										pattern="^((\+\d{1,3}\s?)?(\d{2,3}\s?)?\d{9})$" onblur="updateTel(this)"
+										onfocus="this.select()" placeholder="51999999999"
+										title="Formato: 51912345678 Para mais de um destinatário separe-os com ;" />
+									<!-- pattern="^([0-9]{11})$" -->
+								</div>
+							</div>
+						</div>
+						<table class="wht alertas">
+							<thead>
+								<tr class="cpt hide">
+									<td class=col><label>Grupo</label></td>
+									<td class=col><label>E-mails</label></td>
+									<td class=col><label>Telefones</label></td>
+								</tr>
+							</thead>
+							<tbody></tbody>
+						</table>
+					</div>
+
+					<div class="btn-box clr">
+						<input class="btn wht" onclick="postAlerts()" type="submit" name="sub" value="Salvar" />
+						<a class="btn hvy" href="javascript:addAlertaBotao()" title=Adicionar>Adicionar</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</main>
+	<script>
+		var flagsGerais = [];
+		var flagsZ = [];
+		var flagsZM = [];
+		var alertGroups = {};
+
+		function ajaxFlagsG() {
+			return new Promise((resolve, reject) => {
+				$.ajax({
+					url: "flagsgerais.txt",
+					type: "GET",
+					dataType: "text",
+					success: (response) => {
+						response = response.split("\n");
+						response.forEach((el) => {
+							el = el;
+							flagsGerais.push(el);
+						});
+
+						resolve(response);
+					},
+					error: (error) => {
+						console.error("Erro na requisição AJAX:", error);
+						reject();
+					}
+				});
+			});
+		}
+		function ajaxFlagsZ() {
+			return new Promise((resolve, reject) => {
+				$.ajax({
+					url: "flagszon.txt",
+					type: "GET",
+					dataType: "text",
+					success: (response) => {
+						response = response.split("\n");
+						response.forEach((el) => {
+							el = el;
+							flagsZ.push(el);
+						});
+
+						resolve(response);
+					},
+					error: (error) => {
+						console.error("Erro na requisição AJAX:", error);
+						reject();
+					}
+				});
+			});
+		}
+		function ajaxFlagsZM() {
+			return new Promise((resolve, reject) => {
+				$.ajax({
+					url: "flagszonmaq.txt",
+					type: "GET",
+					dataType: "text",
+					success: (response) => {
+						response = response.split("\n");
+						response.forEach((el) => {
+							el = el;
+							flagsZM.push(el);
+						});
+
+						resolve(response);
+					},
+					error: (error) => {
+						console.error("Erro na requisição AJAX:", error);
+						reject();
+					}
+				});
+			});
+		}
+
+		function ajaxGetGroups() {
+			return new Promise((resolve, reject) => {
+				$.ajax({
+					url: "alertsconfig",
+					type: "GET",
+					dataType: "json",
+					success: (response) => {
+						alertGroups = response;
+
+						resolve(response);
+					},
+					error: (error) => {
+						console.error("Erro na requisição AJAX:", error);
+						reject();
+					}
+				});
+			});
+		}
+
+		function addAlerta(id, emails, telefones, alertas) {
+			let emailRegEx = new RegExp($('#txtEmails').attr('pattern'), 'g');
+			let telRegEx = new RegExp($('#txtTelefones').attr('pattern'), 'g');
+
+			let tabela = $(".alertas tbody");
+			let row = $(tabela[0].insertRow());
+
+			let template = $(".alerta-template").clone();
+			template = template.children();
+
+			let tmp = $(template[0]);
+			tmp.on('click', () => changeGroup(id));
+
+			tmp = $($(template[0]).children()[0]);
+			tmp.attr('name', `id${id}`);
+			tmp.attr('id', `id${id}`);
+			tmp.val(`${id}`);
+
+			tmp = $(template[1]);
+			tmp.on('click', () => changeGroup(id));
+
+			tmp = $($(template[1]).children()[0]);
+			tmp.attr('name', `e${id}`);
+			tmp.attr('id', `e${id}`);
+			for (let mail of emails) {
+				if (mail.match(emailRegEx) == undefined && mail != '') {
+					tmp.addClass('chg'); //Usa a classe chg pra indicar campo invalido.
+					break;
+				}
+			}
+			tmp.attr('title', `${emails.join(';')}`);
+			tmp.val(`${emails.join(';')}`);
+
+			tmp = $(template[2]);
+			tmp.on('click', () => changeGroup(id));
+
+			tmp = $($(template[2]).children()[0]);
+			tmp.attr('name', `t${id}`);
+			tmp.attr('id', `t${id}`);
+			for (let tel of telefones) {
+				if (tel.match(telRegEx) == undefined && tel != '') {
+					tmp.addClass('chg'); //Usa a classe chg pra indicar campo invalido.
+					break;
+				}
+			}
+			tmp.val(`${telefones.join(';')}`);
+
+			tmp = $($(template[3]).children()[0]).children();
+			tmp.attr('href', `javascript:removeAlertaBotao(${id})`); //TESTE
+
+			row.addClass(`item${id}`);
+			row.attr('id', `item${id}`);
+			row.addClass("items");
+
+			template.appendTo(row);
+
+		}
+		function removeAlerta(idx) {
+			let item = $(`.alertas tbody .item${idx}`);
+			// if (item.classList.contains("original")) {
+			// 	setChange(document.querySelector(".alertas"));
+			// }
+			item.remove();
+
+			var e = document.querySelector(".alertas tbody tr");
+			// _count--
+			// if (!e) {
+			// setPermissions(0)
+			// document.getElementById("txtId").disabled = true
+			// document.getElementById("txtEmails").disabled = true
+			// document.getElementById("txtTelefones").disabled = true
+			// document.getElementsByName("sub")[0].formNoValidate = true;
+			// }
+			// else setPermissions(e.id.replace("item", ""))
+		}
+		function changeGroup(idx) {
+			$(".alertas tbody .items").removeClass("active");
+			let item = $(`.alertas tbody .item${idx}`);
+			if (item.length > 0) {
+				item.addClass("active");
+				let chkBoxes = $("#alertcheckboxes input[type=checkbox]");
+				chkBoxes.prop('disabled', false).prop('checked', false);
+				let alertas = alertGroups.alertGroups[idx].ID;
+				for (let el of alertas) {
+					$(`#chkbox${el}`).prop('checked', true);
+				}
+				if (alertas.length < chkBoxes.length - 1) { //-1 pq Ta incluso o checkbox do Selecionar tudo no objeto jQuery
+					$('#chkboxSelAll').prop('checked', false);
+				}
+				else {
+					$('#chkboxSelAll').prop('checked', true);
+				}
+
+				$("#txtId").val(item.find(".n1").val());
+				$("#txtEmails").prop('disabled', false).val(item.find(".n2").val());
+				$("#txtTelefones").prop('disabled', false).val(item.find(".n3").val());
+
+			}
+			else {
+				$("#alertcheckboxes input[type=checkbox]").prop('checked', false).prop('disabled', true);
+				$("#txtId").val('');
+				$("#txtEmails").prop('disabled', true).val('');
+				$("#txtTelefones").prop('disabled', true).val('');
+			}
+		}
+
+		function updateAlertsList() {
+			let val = $(".active").find(".n1").val();
+			let lastActive = val ?? 'TIAGUINHOFEIO'; //Valor bem ridiculo pra não tentar selecionar nada se nada estiver marcado.
+
+			$('.alertas tbody [class^="item"]').remove(); //Apaga tudo os itens da tela.
+			for (let i = 0; i < alertGroups.alertGroups.length; i++) {
+				let el = alertGroups.alertGroups[i];
+				addAlerta(i, el.EM, el.GSM, el.ID);
+			}
+			changeGroup(lastActive); //Se trocar com o valor ridiculo vai desabilitar e limpar os campos.
+		}
+
+		function updateEmail(el) {
+			let val = $(".active").find(".n1").val();
+			if (val != undefined) {
+				alertGroups.alertGroups[val].EM = $(el).val().split(';');
+			}
+
+			updateAlertsList();
+		}
+		function updateTel(el) {
+			let val = $(".active").find(".n1").val();
+			if (val != undefined) {
+				alertGroups.alertGroups[val].GSM = $(el).val().split(';');
+			}
+
+			updateAlertsList();
+		}
+		function updateChkBox(el, selectAll = false) {
+			let val = $(".active").find(".n1").val();
+			let alID = $(el).attr('name').replaceAll('chkbox', '');
+			alID = parseInt(alID); //Converte pra numero.
+			if (val != undefined) {
+				let index = alertGroups.alertGroups[val].ID.indexOf(alID);
+				if (index != -1) {
+					alertGroups.alertGroups[val].ID.splice(index, 1); //Tira o item da lista se existir
+				}
+				if ($(el).prop('checked') == true) {
+					alertGroups.alertGroups[val].ID.push(alID); //Coloca o item na lista.
+				}
+				else {
+					$('#chkboxSelAll').prop('checked', false); //Desmarca o selectAll
+				}
+			}
+
+			// 	if (el.checked)
+			// 		el.parentElement.classList.add("act")
+			// 	else
+			// 		el.parentElement.classList.remove("act")
+
+
+			if (!selectAll) updateAlertsList();
+		}
+		function selectAll(el) {
+			let val = $(el).prop('checked');
+			let chkBoxes = $("#alertcheckboxes input[type=checkbox][name!=chkboxSelAll]");
+			chkBoxes.prop('checked', val);
+			//$("#alertcheckboxes input[type=checkbox][name!=chkboxSelAll]").trigger('click'); //Não pode dar trigger se não ele desmarca
+			for (let chkBox of chkBoxes) {
+				updateChkBox(chkBox, true);
+			}
+
+			updateAlertsList();
+		}
+
+		function addAlertaBotao() {
+			if (alertGroups.alertGroups.length < alertGroups.maxAlertGroups) {
+				alertGroups.alertGroups.push({
+					EM: [''],
+					GSM: [''],
+					ID: []
+				});
+			}
+			else
+				alert("O número máximo de usuários permitido é " + alertGroups.maxAlertGroups + ".");
+
+			updateAlertsList();
+		}
+		function removeAlertaBotao(idx) {
+			alertGroups.alertGroups.splice(idx, 1);
+			updateAlertsList();
+		}
+
+		function postAlerts() {
+			return new Promise((resolve, reject) => {
+				console.log(`POST AJAX:\n${JSON.stringify(alertGroups.alertGroups)}`);
+
+				let emailRegEx = new RegExp($('#txtEmails').attr('pattern'), 'g');
+				let telRegEx = new RegExp($('#txtTelefones').attr('pattern'), 'g');
+				let invalidFields = [];
+				alertGroups.alertGroups.forEach((el, i) => {
+					for (let email of el.EM) {
+						if (email.match(emailRegEx) == undefined && email != '') {
+							// if (email == '')
+							// 	invalidFields.push(`Grupo ${i}: Email não pode ser vazio.`);
+							// else
+							invalidFields.push(`Grupo ${i}: ${email} (Invalido), Exemplos validos: email@servidor.com.br;email@servidor.com`);
+						}
+					}
+					for (let tel of el.GSM) {
+						if (tel.match(telRegEx) == undefined && tel != '') {
+							invalidFields.push(`Grupo ${i}: ${tel} (Invalido), Exemplos validos: 988888888;51988888888;+5551988888888`);
+						}
+					}
+				});
+				if (invalidFields.length > 0) {
+					alert(`Favor corrigir os campos:\n${invalidFields.join('\n')}`);
+					reject();
+					return;
+				}
+
+				$.ajax({
+					url: "alertas",
+					type: "POST",
+					contentType: "application/json",
+					data: JSON.stringify(alertGroups.alertGroups),
+					success: (response) => {
+						console.log('POST AJAX OK');
+						console.log(response);
+
+						location.href = window.location.pathname; //Recarrega a mesma pagina.
+
+						resolve(response);
+					},
+					statusCode: {
+						401: () => {
+							reject(401);
+						},
+						403: () => {
+							reject(403);
+						},
+						500: () => {
+							reject(500);
+						}
+					},
+					error: (err) => {
+						console.error("Erro na requisição AJAX:", err);
+						reject(err);
+					}
+				});
+			});
+		}
+
+		$(document).ready(async function () {
+			await ajaxFlagsG();
+			$('<li><label style="font-weight: bold">Gerais</label></li>').appendTo('#alertcheckboxes');
+			for (let i = 0; i < flagsGerais.length; i++) {
+				$(`<li><input type="checkbox" name="chkbox${i}" id="chkbox${i}" onclick="updateChkBox(this)"><label>${flagsGerais[i]}</label></li>`).appendTo('#alertcheckboxes');
+			}
+
+			await ajaxFlagsZ();
+			$('<li><label style="font-weight: bold">Zona</label></li>').appendTo('#alertcheckboxes');
+			for (let i = 0; i < flagsZ.length; i++) {
+				$(`<li><input type="checkbox" name="chkbox${i + 1000}" id="chkbox${i + 1000}" onclick="updateChkBox(this)"><label>${flagsZ[i].replaceAll('Z%', '')}</label></li>`).appendTo('#alertcheckboxes');
+			}
+
+			await ajaxFlagsZM();
+			$('<li><label style="font-weight: bold">Zona e Maquina</label></li>').appendTo('#alertcheckboxes');
+			for (let i = 0; i < flagsZM.length; i++) {
+				$(`<li><input type="checkbox" name="chkbox${i + 2000}" id="chkbox${i + 2000}" onclick="updateChkBox(this)"><label>${flagsZM[i].replaceAll('Z%', '').replaceAll('Maq#', '')}</label></li>`).appendTo('#alertcheckboxes');
+			}
+
+			await ajaxGetGroups();
+			updateAlertsList();
+		});
+		//CODIGOS ANTIGOS ABAIXO.
+		var modelo = "GSM";
+		if (modelo != "GSM") {
+			let el = $("#txtTelefones");
+			el.prop("disabled", true);
+			el.attr("placeholder", "Disponivel somente em modelos GSM");
+		}
+	</script>
+</body>
+
+</html>

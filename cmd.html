@@ -1,0 +1,222 @@
+<html lang="pt-br">
+
+<head>
+	<title>Controlador AGST</title>
+	<meta http-equiv="content-type" content="text/html;charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="icon" href="favicon.ico" />
+	<link href="/style.css" rel="stylesheet" />
+	<script src="/jquery-3.6.0.min.js"></script>
+	<script src="/scripts.js"></script>
+</head>
+
+<body>
+	<div class="div-top">
+		<header>
+			<a class=i-menu onclick=openCloseMenu() title=Menu><i>&#xf00b</i></a>
+			<ul class=ul-right>
+				<li><a href=painel.html title="Alertas Ativos"><i>&#xf001</i><span class=ntf></span></a></li>
+				<li><a href=logout.html title=Sair><i>&#xf011</i></a></li>
+			</ul>
+			<nav id="menu-nav">
+			</nav>
+			<script>
+				$(document).ready(function () {
+					ajaxMenu();
+				});
+			</script>
+		</header>
+	</div>
+	<main class="cmds">
+		<form action="" method="post" id="form">
+			<div class="cntnr">
+				<div class="tb-cnt">
+					<div class="min-height">
+						<div class="top-pg">
+							<p class="tlt">Comandos</p>
+						</div>
+						<div class="blk-lft inv">
+							<div class="tbl-rsp">
+								<table>
+									<tr>
+										<td><input type="radio" name="cmd" value="tp" checked="checked" /></td>
+										<td width="20%"><label>Troca Piloto</label></td>
+										<td>
+											<label class="light differ">da</label>
+											<select class="med" name="znt" id="znt" onchange="chgZona()">
+												<option value=0>Zona 1</option>
+												<option value=1>Zona 2</option>
+												<option value=2>Zona 3</option>
+												<option value=2>Zona 4</option>
+											</select>
+										</td>
+										<td>
+											<label class="light differ">para</label>
+											<select class="med" name="mqt" id="mqt">
+												<option value=1>Maquina 1</option>
+												<option value=2>Maquina 2</option>
+												<option value=3>Maquina 3</option>
+												<option value=4>Maquina 4</option>
+												<option value=5>Maquina 5</option>
+												<option value=6>Maquina 6</option>
+												<option value=7>Maquina 7</option>
+												<option value=8>Maquina 8</option>
+											</select>
+										</td>
+									</tr>
+									<tr>
+										<td><input type="radio" name="cmd" value="rfa" /></td>
+										<td><label>Reset de Falhas</label></td>
+										<td>
+											<label class="light differ">da</label>
+											<select class="med" name="znr" id="znr">
+												<option value=0>Zona 1</option>
+												<option value=1>Zona 2</option>
+												<option value=2>Zona 3</option>
+												<option value=3>Zona 4</option>
+											</select>
+										</td>
+										<td class="hide-mobile-l"></td>
+									</tr>
+									<tr>
+										<td width="10%"><input type="radio" name="cmd" value="ain" /></td>
+										<td><label>Rearmar Invasão</label></td>
+										<td class="hide-mobile-l"></td>
+										<td class="hide-mobile-l"></td>
+									</tr>
+									<tr>
+										<td width="10%"><input type="radio" name="cmd" value="din" /></td>
+										<td><label>Desarmar Invasão</label></td>
+										<td class="hide-mobile-l"></td>
+										<td class="hide-mobile-l"></td>
+									</tr>
+									<tr>
+										<td width="10%"><input type="radio" name="cmd" value="rst" /></td>
+										<td><label>Reset CLP</label></td>
+										<td class="hide-mobile-l"></td>
+										<td class="hide-mobile-l"></td>
+									</tr>
+								</table>
+							</div>
+						</div>
+					</div>
+					<div class="btn-box clr">
+						<input class="btn grn" type="submit" id="submit" title="Enviar" value="Enviar" />
+					</div>
+				</div>
+			</div>
+		</form>
+	</main>
+	<script>
+		var itens = [];
+
+		function loadSystemConfig() {
+			return new Promise((resolve, reject) => {
+				$.ajax('./data-from-clp?PZ1=1&PZ2=1&PZ3=1&PZ4=1&CFG=1', {
+					type: 'get',
+					dataType: 'json',
+					timeout: 2000,
+					success: (data, status, xhr) => {
+						$("#znt").children().remove().end();
+						$("#znr").children().remove().end();
+						for (var i = 0; i < data.CFG.ZONAS; i++) {
+							itens.push(data[`PZ${(i + 1)}`][`P${24 + (i * 100)}`]);
+							$("#znt").append(`<option value=${i}>Zona ${i + 1}</option>`);
+							$("#znr").append(`<option value=${i}>Zona ${i + 1}</option>`);
+						}
+						resolve();
+					},
+					error: (jqXhr, textStatus, errorMessage) => {
+						console.error(`${errorMessage}`);
+						reject();
+					},
+				});
+			});
+		}
+
+		/* Atualiza a lista de maquinas a partir da zona selecionada */
+		function chgZona() {
+			var last = $("#mqt").val();
+
+			$('#mqt').children().remove().end();
+			for (var i = 1; i <= itens[$("#znt").val()]; i++) {
+				$("#mqt").append(`<option value="${i}">Máquina ${i}</option>`);
+			}
+			if (last <= $("#mqt option").length)
+				$("#mqt").val(last);
+		}
+
+		function postCmd() {
+			$.ajax('./config', {
+				type: 'post',
+				dataType: 'json',
+				timeout: 500,
+				success: (data, status, xhr) => {
+
+				},
+				error: (jqXhr, textStatus, errorMessage) => {
+					console.error(`${errorMessage}`);
+				},
+			});
+		}
+
+		function convertFormToJSON(form) {
+			const array = $(form).serializeArray(); // Encodes the set of form elements as an array of names and values.
+			const json = {};
+			$.each(array, function () {
+				json[this.name] = this.value || "";
+			});
+			return json;
+		}
+
+		$(document).ready(async function () {
+			await loadSystemConfig();
+			chgZona();
+
+			$("#submit").on('click', function () {	// click on button submit
+				const jsonn = convertFormToJSON($("#form"));
+
+				$.ajax({	// send ajax
+					url: 'cmd.html', // url where to submit the request
+					type: "POST", // type of action POST || GET
+					dataType: 'json', // data type
+					data: jsonn, // post data || get data
+					success: function (result) {
+						// you can see the result from the console
+						// tab of the developer tools
+						console.log(jsonn);
+						console.log(result);
+					},
+					error: function (xhr, resp, text) {
+						console.log(xhr, resp, text);
+					}
+				})
+			});
+		});
+
+		// $("#cmd-form").on("submit", function (e) {
+		// 	e.preventDefault();
+		// 	const form = $(e.target);
+		// 	const jsonn = convertFormToJSON(form);
+		// 	// console.log(json);
+
+		// 	$.ajax({
+		// 		url: 'cmd.html', // url where to submit the request
+		// 		type : "POST", // type of action POST || GET
+		// 		dataType : 'json', // data type
+		// 		data : jsonn, // post data || get data
+		// 		success : function(result) {
+		// 			// you can see the result from the console
+		// 			// tab of the developer tools
+		// 			console.log(result);
+		// 		},
+		// 		error: function(xhr, resp, text) {
+		// 			console.log(xhr, resp, text);
+		// 		}
+		// 	})
+
+		// });
+	</script>
+</body>
+
+</html>

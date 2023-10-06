@@ -1,0 +1,8 @@
+NTC 10K
+Umidade
+0-5V
+0-1V
+0-20ma
+4-20ma
+Digital High
+Digital Low

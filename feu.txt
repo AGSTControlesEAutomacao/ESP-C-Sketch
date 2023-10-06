@@ -1,0 +1,54 @@
+Sem Funcao
+Temperatura Interna Z%
+Temperatura Insuflamento Z% Maq#
+Temperatura Externa Z%
+Temperatura Retorno Z% Maq#
+Temperatura Ambiente 1 Z%
+Temperatura Ambiente 2 Z%
+Temperatura Ambiente 3 Z%
+Temperatura Ambiente 4 Z%
+Umidade Interna Z%
+Umidade Externa Z%
+Umidade Retorno Z% Maq#
+Umidade Ambiente 1 Z%
+Umidade Ambiente 2 Z%
+Umidade Ambiente 3 Z%
+Umidade Ambiente 4 Z%
+Pressao Descarga Comp1 Z% Maq#
+Pressao Descarga Comp2 Z% Maq#
+Pressao Descarga Comp3 Z% Maq#
+Pressao Succao Comp1 Z% Maq#
+Pressao Succao Comp2 Z% Maq#
+Pressao Succao Comp3 Z% Maq#
+Pressao Ambiente Z%
+Temperatura Ambiente 5 Z%
+Umidade Ambiente 5 Z%
+Temp Ent Sala Z%
+Temp Sai Sala Z%
+Temper Insuf Geral Z%
+Temper Retor Geral Z%
+Temp Ent Agua Z% Maq#
+Temp Sai Agua Z% Maq#
+Pressao Ar Maq Z% Maq#
+Pressao Ar Duto Z%
+Pressao Agua Z%
+Temperatura Entrada Cag Maq#
+Temperatura Saida Cag Maq#
+Temp. Entrada Geral Primaria 
+Temp. Saida Geral Primaria 
+Temp. Entrada Geral Secundaria 
+Temp. Saida Geral Secundaria 
+Temperatura Ent. Geral Cag 
+Temperatura Sai. Geral Cag 
+Temperatura Externa Chiller 
+Pressao D'agua Anel Secundario 
+Temp.entrada D'agua Z%
+Temp.saida D'agua Z%
+Temp.entrada Torre Z% Maq#
+Temp.saida Torre Z% Maq#
+Temp. Entrada Bac 
+Temp. Saida Bac 
+Temp. Entrada Geral Torre 
+Temp. Saida Geral Torre 
+Temp.externa Torre 
+Pressao D'agua Bac 

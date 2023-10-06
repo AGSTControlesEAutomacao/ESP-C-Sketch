@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+	<title>Controlador AGST</title>
+	<meta http-equiv="content-type" content="text/html;charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="icon" href="favicon.ico" />
+	<link href="/style.css" rel="stylesheet" />
+	<script src="/jquery-3.6.0.min.js"></script>
+	<script src="/scripts.js"></script>
+	<script src="/chart.min.js"></script>
+	<script src="/datatables.min.js"></script> <!-- Para gerar XLS -->
+	<style>
+		.filters {
+			margin-left: 25px;
+		}
+
+		.filters a {
+			margin-left: 15px;
+			display: block;
+			float: left;
+			font-size: 12px;
+			line-height: 15px;
+		}
+
+		.filters a.selected {
+			text-decoration: line-through;
+			opacity: 0.5
+		}
+
+		.filters a span {
+			display: block;
+			float: left;
+			width: 20px;
+			height: 15px;
+			margin-right: 5px;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="div-top">
+		<header>
+			<a class=i-menu onclick=openCloseMenu() title=Menu><i>&#xf00b</i></a>
+			<ul class=ul-right>
+				<li><a href=painel.html title="Alertas Ativos"><i>&#xf001</i><span class=ntf></span></a></li>
+				<li><a href=logout.html title=Sair><i>&#xf011</i></a></li>
+			</ul>
+			<nav id="menu-nav">
+			</nav>
+			<script>
+				$(document).ready(function () {
+					ajaxMenu();
+				});
+			</script>
+		</header>
+	</div>
+	<main class="graph">
+		<form action="#" method="get">
+			<div class="cntnr">
+				<div class="top-pg" style="margin-bottom: 10px;">
+					<p class="tlt">Gráfico das Entradas Universais</p>
+
+					<div class="btn-box date">
+						<input class="btn wht" type='button' onclick='refreshLogsBtn()' value='Atualizar'
+							title="Disponibiliza 2976 registros das EUs em gráfico" />
+						<input class='btn' type='button' onclick="exportToXLS()" value='Exportar'
+							title="Exporta os registros das EUs do Conflex" />
+
+						<input class="btn hvy" onclick="window.print()" type="button" title="Imprimir"
+							value="Imprimir" />
+
+						<div class="date-box">
+							<input type="text" id="enddate" class="date" title="Data Fim" placeholder="Data Fim"
+								disabled>
+							<input type="text" id="startdate" class="date" title="Data Início" placeholder="Data Início"
+								disabled>
+						</div>
+					</div>
+				</div>
+				<div id='loader' class="loader" style='display: none;margin-bottom: 8px;width: 100%;'>
+					<div class="loaderBar"></div>
+				</div>
+				<div class="informbox"
+					style="margin-bottom: 10px;border: 1px solid #DEDEDE;color: #676767;font-weight: bold;padding: 5px;">
+					Os valores podem estar desatualizados, clique em "Atualizar" para os valores mais recentes. <span
+						id="lastreg" style="float: right;"></span>
+				</div>
+				<div class="filters">
+
+				</div>
+				<div class="blk inv">
+					<canvas class="chart" id="grafico" style="width: 1805px; height: 790px;"></canvas>
+				</div>
+			</div>
+
+		</form>
+	</main>
+	<script>
+		const LOGSKEY = "storedLogs";
+		const FULLBUFFERKEY = "allStored";
+		const MAXLOGS = 14198; //14207 é o ultimo endereço que da pra pedir... Só 1 registro.
+		const YAXISIDs = ['ntc', 'umid', 'v05', 'v01', 'a020', 'a420', 'high', 'low'];
+		const CHARTSCALES = {
+			ntc: {
+				title: { text: 'Temperatura', display: true },
+				position: 'left',
+				suggestedMin: -1.0,
+				suggestedMax: 65.0,
+				ticks: {
+					callback: function (value, index, ticks) {
+						return `${value}°C`;
+					}
+				}
+			},
+			umid: {
+				title: { text: 'Umidade', display: true },
+				position: 'right',
+				suggestedMin: 0,
+				suggestedMax: 100,
+				ticks: {
+					callback: function (value, index, ticks) {
+						return `${value}%`;
+					}
+				}
+			},
+			v05: {
+				title: { text: 'Pressão', display: true },
+				position: 'left',
+			},
+			v01: {
+				title: { text: '0-1V', display: true },
+				position: 'right',
+			},
+			a020: {
+				title: { text: '0-20ma', display: true },
+				position: 'left',
+			},
+			a420: {
+				title: { text: 'Pressão', display: true },
+				position: 'right',
+			}
+			,
+			high: {
+				title: { text: 'Digital High', display: true },
+				position: 'left',
+			},
+			low: {
+				title: { text: 'Digital Low', display: true },
+				position: 'right',
+			}
+		}
+		var fEU = [];
+		var tEU = [];
+		var allLogs = [];
+		var lastLog = 1;
+		var receivingNew = false;
+		var newLogs = []; //Usado no refresh ao receber novos logs.
+		var startDate, endDate;
+		var screenChart = new Chart(document.getElementById(`grafico`), {
+			type: 'line',
+			options: {
+				responsive: true,
+				interaction: {
+					intersect: false,
+				},
+				scales: {
+					x: { //Escala Horizontal | Data
+						stacked: true,
+					}
+					//Adiciona as outras dinamicamente
+				},
+				plugins: {
+					legend: {
+						align: 'start'
+					}
+				},
+				// animation: false,
+				elements: {
+					point: {
+						radius: 0 //Desabilita o render dos pontos pra ajudar na performace quando exibe muito dado.
+					}
+				}
+			},
+			data: {
+				labels: [],
+				datasets: [
+					{
+						label: 'EU1',
+						yAxisID: 'ntc',
+						data: [],
+						// fill: true,
+						borderColor: 'rgb(0,0,0)',
+					},
+					{
+						label: 'EU2',
+						yAxisID: 'ntc',
+						data: [],
+						borderColor: 'rgb(85,170,255)',
+					},
+					{
+						label: 'EU3',
+						yAxisID: 'ntc',
+						data: [],
+						borderColor: 'rgb(170,85,170)',
+					},
+					{
+						label: 'EU4',
+						yAxisID: 'ntc',
+						data: [],
+						borderColor: 'rgb(255,0,85)',
+					},
+					{
+						label: 'EU5',
+						yAxisID: 'ntc',
+						data: [],
+						borderColor: 'rgb(0,170,170)',
+					},
+					{
+						label: 'EU6',
+						yAxisID: 'ntc',
+						data: [],
+						borderColor: 'rgb(85,255,255)',
+					},
+					{
+						label: 'EU7',
+						yAxisID: 'ntc',
+						data: [],
+						borderColor: 'rgb(170,0,0)',
+					},
+					{
+						label: 'EU8',
+						yAxisID: 'ntc',
+						data: [],
+						borderColor: 'rgb(255,85,85)',
+					},
+					{
+						label: 'EU9',
+						yAxisID: 'ntc',
+						data: [],
+						borderColor: 'rgb(0,85,255)',
+					},
+					{
+						label: 'EU10',
+						yAxisID: 'ntc',
+						data: [],
+						borderColor: 'rgb(85,0,170)',
+					},
+					{
+						label: 'EU11',
+						yAxisID: 'ntc',
+						data: [],
+						borderColor: 'rgb(170,170,0)',
+					},
+					{
+						label: 'EU12',
+						yAxisID: 'ntc',
+						data: [],
+						borderColor: 'rgb(255,255,85)',
+					},
+				]
+			},
+		});
+
+		//Passa deixando as cores "internas" iguais a borda e tirando o ponto dos steps.
+		for (let el of screenChart.data.datasets) {
+			el.backgroundColor = el.borderColor;
+			el.pointStyle = false;
+			// el.tension = 0.8;
+		}
+
+
+		//Função que faz o reparse das datas do localStorage
+		function dateParser(key, value) {
+			// Verifique se o valor é uma string que corresponde ao padrão de data
+			if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(value)) {
+				// Parse a string para criar um objeto Date
+				return new Date(value);
+			}
+			return value;
+		}
+
+		function ajaxLogData(type = 4, start = 1, qtd = 1, putOnAllLogs = true) {
+			return new Promise((resolve, reject) => {
+				$.ajax({
+					url: `logs?type=${type}&start=${start}&qtd=${qtd}`,
+					type: "GET",
+					dataType: "json",
+					success: (response) => {
+						let toResolve = [];
+						for (let el of response) {
+							if (el.DATETIME != "2000-00-00T00:00:00") {
+								el.DATETIME = new Date(Date.parse(el.DATETIME));
+								if (putOnAllLogs)
+									allLogs.push(el);
+								toResolve.push(el);
+							}
+						}
+
+						localStorage.setItem(LOGSKEY, JSON.stringify(allLogs)); //Toda vez que fizer um ajax já salva no localStorage a variavel global
+						if (putOnAllLogs) { //Só registra que encheu o buffer se estiver fazendo o Ajax pra dentro da variavel "global"
+							if (toResolve.length < qtd || qtd + start >= MAXLOGS)
+								localStorage.setItem(FULLBUFFERKEY, true);
+						}
+
+
+						resolve(toResolve);
+
+					},
+					statusCode: {
+						401: () => {
+							reject(401);
+						},
+						403: () => {
+							reject(403);
+						},
+						500: () => {
+							reject(500);
+						}
+					},
+					error: (error) => {
+						console.error("Erro na requisição AJAX:", error);
+						reject();
+						// ajaxLogsData(type, start, qtd).then(() => resolve());
+					}
+				});
+			})
+		}
+		function fillChartData(arrayWithData) {
+			for (let j = 0; j < arrayWithData.length; j++) {
+				let data = arrayWithData[j].DATETIME;
+				data = `${data.toLocaleDateString()} ${data.toLocaleTimeString()}`;
+				screenChart.data.labels.push(data);
+				for (let i = 0; i < arrayWithData[j].ANALOGS.length; i++) {
+					let valor = arrayWithData[j].ANALOGS[i] <= 650 ? arrayWithData[j].ANALOGS[i] : 0;
+					if (screenChart.data.datasets[i].yAxisID == 'ntc') {
+						valor /= 10;
+					}
+					screenChart.data.datasets[i].data.push(valor);
+				}
+			}
+			screenChart.update();
+		}
+		async function logLoader() {
+			$('#loader').css("display", "");
+			receivingNew = true;
+			try {
+				let diff = (((lastLog + 10) > MAXLOGS) ? (MAXLOGS - lastLog) : 10);
+				let log = await ajaxLogData(4, lastLog, diff);
+				lastLog += log.length;
+
+				if (log.length > 0) {
+					$("#startdate").datepicker('option', 'minDate', log[log.length - 1].DATETIME);
+					$("#enddate").datepicker('option', 'minDate', log[log.length - 1].DATETIME);
+				}
+
+				if (log.length == 10 && lastLog <= MAXLOGS) { //FIXME: Trocar a condição de parada
+					setTimeout(logLoader, 20); //Requisita mais logs a cada 200ms após a requisição anterior
+					return;
+				}
+			} catch (err) {
+				//Ocorreu erro na solicitação, pede de novo.
+				setTimeout(logLoader, 100);
+				return;
+			}
+
+			receivingNew = false;
+			$('#loader').css("display", "none"); //Tira o loader
+			//Libera os campos de datepicker ao finalizar...
+			$("#startdate").removeAttr('disabled');
+			$("#enddate").removeAttr('disabled');
+		}
+
+		function ajaxEUFunction() {
+			return new Promise((resolve, reject) => {
+				$.ajax({
+					url: "feu.txt",
+					type: "GET",
+					dataType: "text",
+					success: (response) => {
+						response = response.split("\n");
+						response.forEach((el) => {
+							el = el;
+							fEU.push(el);
+						});
+
+						resolve();
+					},
+					statusCode: {
+						401: () => {
+							reject(401);
+						},
+						403: () => {
+							reject(403);
+						},
+						500: () => {
+							reject(500);
+						}
+					},
+					error: (error) => {
+						console.error("Erro na requisição AJAX:", error);
+						reject();
+					}
+				});
+			});
+		}
+		function ajaxEUType() {
+			return new Promise((resolve, reject) => {
+				$.ajax({
+					url: "teu.txt",
+					type: "GET",
+					dataType: "text",
+					success: (response) => {
+						response = response.split("\n");
+						response.forEach((el) => {
+							el = el;
+							tEU.push(el);
+						});
+
+						resolve();
+					},
+					statusCode: {
+						401: () => {
+							reject(401);
+						},
+						403: () => {
+							reject(403);
+						},
+						500: () => {
+							reject(500);
+						}
+					},
+					error: (error) => {
+						console.error("Erro na requisição AJAX:", error);
+						reject();
+					}
+				});
+			});
+		}
+		function ajaxEUConfigs() {
+			return new Promise((resolve, reject) => {
+				$.ajax({
+					url: "data-from-clp?EU=1",
+					type: "GET",
+					dataType: "json",
+					success: (response) => {
+						for (let i = 0; i < 12; i++) {
+							let zon = response.EU[`ZU${i + 1}`] + 1;
+							let maq = response.EU[`MU${i + 1}`];
+							let axis = YAXISIDs[response.EU[`TU${i + 1}`]];
+							screenChart.data.datasets[i].label += '(' + fEU[response.EU[`EU${i + 1}`]].replaceAll('Z%', `Z ${zon}`).replaceAll('Maq#', `Maq ${maq}`) + ')';
+							screenChart.data.datasets[i].yAxisID = axis;
+							screenChart.options.scales[axis] = CHARTSCALES[axis]; //Habilita a escala no grafico
+						}
+						resolve();
+					},
+					statusCode: {
+						401: () => {
+							reject(401);
+						},
+						403: () => {
+							reject(403);
+						},
+						500: () => {
+							reject(500);
+						}
+					},
+					error: (error) => {
+						console.error("Erro na requisição AJAX:", error);
+						reject();
+					}
+				});
+			});
+		}
+
+		async function logLoaderNew(initLog = 1) {
+			receivingNew = true;
+			$('#loader').css("display", ""); //Tira o loader
+			try {
+				localStorage.setItem(FULLBUFFERKEY, false);
+				let diff = (((initLog + 10) > MAXLOGS) ? (MAXLOGS - initLog) : 10);
+				let logs = await ajaxLogData(4, initLog, diff, false);
+				let mostRecent;
+				if (allLogs.length > 0) {
+					mostRecent = allLogs[0].DATETIME.getTime();
+				} else {
+					mostRecent = new Date('2000-01-01T00:00:00.000Z').getTime();
+				}
+				initLog += logs.length;
+
+				for (let i = 0; i < logs.length; i++) {
+					if (mostRecent >= logs[i].DATETIME.getTime()) { //Chegou no MESMO evento ou mais atual que capturado, então acabou os mais novos.
+						allLogs = [...newLogs, ...allLogs]; //Concatena os novos valores no inicio da lista.
+						newLogs = [];
+
+						mostRecent = allLogs[0].DATETIME;
+						$("#startdate").datepicker('option', 'maxDate', mostRecent);
+						$("#enddate").datepicker('option', 'maxDate', mostRecent);
+						$("#startdate").removeAttr('disabled');
+						$("#enddate").removeAttr('disabled');
+
+						localStorage.setItem(LOGSKEY, JSON.stringify(allLogs));
+						localStorage.setItem(FULLBUFFERKEY, true);
+						lastLog = allLogs.length + 1;
+
+						//Deixa em exibição no maximo 100 registros.
+						let lastShow = 99;
+						if (allLogs.length < 100)
+							lastShow = allLogs.length - 1;
+
+						//Lib LIXO não triga sozinha a troca.
+						$('#startdate').datepicker('setDate', allLogs[lastShow].DATETIME);
+						$('#startdate').val($('#startdate').datepicker('getDate').toLocaleDateString());
+						$('#enddate').datepicker('setDate', allLogs[0].DATETIME);
+						$('#enddate').val($('#enddate').datepicker('getDate').toLocaleDateString());
+						selectRange($('#startdate').datepicker('getDate').getTime(), $('#enddate').datepicker('getDate').getTime() + 86399000);
+
+						$('#loader').css("display", "none"); //Tira o loader
+						receivingNew = false;
+
+						return;
+					}
+					newLogs.push(logs[i]);
+				}
+
+				if (logs.length > 0)
+					setTimeout(() => { logLoaderNew(initLog) }, 20);
+			}
+			catch (err) {
+				setTimeout(() => { logLoaderNew(initLog) }, 20); //Tenta de novo.
+			}
+		}
+
+		function refreshLogsBtn() {
+			if (receivingNew) {
+				alert("Aguarde, dados sendo recebidos.");
+				return;
+			}
+
+			logLoaderNew();
+		}
+
+		function selectRange(startDate, endDate) {
+			if (startDate > endDate) return false;
+
+			let indexStart = allLogs.length;
+			let indexEnd = 0;
+			for (let i = 0; i < allLogs.length; i++) {
+				let thisDT = allLogs[i].DATETIME.getTime();
+				if (thisDT <= endDate && i < indexStart)
+					indexStart = i;
+				if (thisDT >= startDate && i > indexEnd)
+					indexEnd = i;
+			}
+
+			screenChart.data.labels = [];
+			for (let i = 0; i < screenChart.data.datasets.length; i++)
+				screenChart.data.datasets[i].data = [];
+
+			let tmpData = allLogs.slice(indexStart, indexEnd); //indexEnd + 1?
+			fillChartData(tmpData);
+			// screenChart.update();
+
+			return true;
+		}
+		function timeSelector(selectedTimeString, element) {
+			console.log(`Date Selected: ${selectedTimeString}`);
+			console.log(`Element: ${element}`);
+			let startDate = $("#startdate").datepicker('getDate').getTime(); //Data do campo ja vem com hora em 00:00:00
+			let endDate = $("#enddate").datepicker('getDate').getTime() + 86399000; //Adiciona os segundos faltantes até 23:59:59
+			selectRange(startDate, endDate);
+		}
+
+		//Usa o DataTables pra gerar o XLS
+		function exportToXLS() {
+			let eus = '';
+			for (let i = 0; i < 12; i++) {
+				eus += `<th>EU${i + 1}</th>`
+			}
+			let tmpTable = new DataTable($(`<table><thead><tr><th>Data</th>${eus}</tr></thead></table>`), {
+				buttons: ['excelHtml5']
+			});
+			for (let el of allLogs) {
+				let row = [`${el.DATETIME.toLocaleDateString()} ${el.DATETIME.toLocaleTimeString()}`];
+				for (let i = 0; i < el.ANALOGS.length; i++) {
+					row.push(el.ANALOGS[i]);
+				}
+
+				tmpTable.row.add(row);
+			}
+			tmpTable.rows().invalidate().draw(); //Pra dar refresh na tabela.
+			tmpTable.button('0').trigger(); //Força a clicar no botão de HTML
+		}
+
+		$(document).ready(async function () {
+			$('#loader').css("display", "");
+			$("#startdate").datepicker({
+				dateFormat: "dd/mm/yy",
+				changeMonth: true,
+				changeYear: true,
+				numberOfMonths: 2,
+				onSelect: timeSelector
+			});
+			$("#enddate").datepicker({
+				dateFormat: "dd/mm/yy",
+				changeMonth: true,
+				changeYear: true,
+				numberOfMonths: 2,
+				onSelect: timeSelector
+			});
+
+			do {
+				try {
+					await ajaxEUFunction(); //Fica rodando até vir.
+					break;
+				} catch (err) {
+					if (err >= 400 && err <= 499) {
+						alert('Sem sessão.');
+						location.href = window.location.pathname;
+					}
+				}
+			} while (true);
+			do {
+				try {
+					await ajaxEUConfigs(); //Fica rodando até vir.
+					break;
+				} catch (err) {
+					if (err >= 400 && err <= 499) {
+						alert('Sem sessão.');
+						location.href = window.location.pathname;
+					}
+				}
+			} while (true);
+
+			const allBuffered = localStorage.getItem(FULLBUFFERKEY);
+			const storedLogs = JSON.parse(localStorage.getItem(LOGSKEY), dateParser);
+			if (storedLogs != undefined && allBuffered == 'true') {
+				allLogs = storedLogs;
+				lastLog = allLogs.length + 1;
+				//Data Minima
+				$("#startdate").datepicker('option', 'minDate', (allLogs[allLogs.length - 1] ?? { DATETIME: new Date() }).DATETIME);
+				$("#enddate").datepicker('option', 'minDate', (allLogs[allLogs.length - 1] ?? { DATETIME: new Date() }).DATETIME);
+				//Data Maxima
+				$("#startdate").datepicker('option', 'maxDate', (allLogs[0] ?? { DATETIME: new Date() }).DATETIME);
+				$("#enddate").datepicker('option', 'maxDate', (allLogs[0] ?? { DATETIME: new Date() }).DATETIME);
+
+				let maxLog = (allLogs.length > 100 ? 100 : allLogs.length);
+				let tmpData = allLogs.slice(0, maxLog);
+				$("#startdate").datepicker('setDate', (tmpData[tmpData.length - 1] ?? { DATETIME: new Date() }).DATETIME);
+				$("#startdate").val($("#startdate").datepicker('getDate').toLocaleDateString());
+				$("#enddate").datepicker('setDate', (tmpData[0] ?? { DATETIME: new Date() }).DATETIME);
+				$("#enddate").val($("#enddate").datepicker('getDate').toLocaleDateString());
+				fillChartData(tmpData);
+
+				logLoaderNew();
+
+			} else {
+				$('#loader').css("display", "");
+				receivingNew = true;
+				for (let i = 0; i < 10; i++) { //Preenche a tabela com os primeiros 100 dados
+					try {
+						let log = await ajaxLogData(4, lastLog, 10);
+						lastLog += log.length;
+						fillChartData(log);
+
+						$("#startdate").datepicker('option', 'minDate', (log[log.length - 1] ?? { DATETIME: new Date() }).DATETIME);
+						$("#enddate").datepicker('option', 'minDate', (log[log.length - 1] ?? { DATETIME: new Date() }).DATETIME);
+						$("#startdate").datepicker('setDate', (log[log.length - 1] ?? { DATETIME: new Date() }).DATETIME);
+						$("#startdate").val($('#startdate').datepicker('getDate').toLocaleDateString());
+
+						if (i == 0) {
+							$("#startdate").datepicker('option', 'maxDate', (log[0] ?? { DATETIME: new Date() }).DATETIME);
+							$("#enddate").datepicker('option', 'maxDate', (log[0] ?? { DATETIME: new Date() }).DATETIME);
+							$("#enddate").datepicker('setDate', (log[0] ?? { DATETIME: new Date() }).DATETIME);
+							$("#enddate").val($('#enddate').datepicker('getDate').toLocaleDateString());
+						}
+						if (log.length == 0 || i == 9) {
+							break;
+						}
+					} catch (err) {
+						//Ocorreu erro na solicitação, pede de novo.
+						i--;
+					}
+				}
+				//TODO: Colocar startDate e endDate nos pickers.
+
+				logLoader(); //Solicita o resto.
+			}
+		});
+		//Pega o valor da DIV e coloca na variavel javascript.
+		// flashFile = document.getElementById("valormedidas").innerHTML;
+		// if (flashFile != "") chartFLoad();
+
+		// //Pega a data do ultimo registro para colocar na caixa de informação.
+		// let ultData = "";
+		// if (flashFile != "") {
+		// 	ultData = "Último registro: " + flashFile.substring(flashFile.indexOf("\n"), flashFile.indexOf("\n") + 17).replace(";", " ");
+		// }
+		// document.getElementById("lastreg").innerHTML = ultData;
+	</script>
+	<!-- <div id="valormedidas" style="display: none;">
+	</div> -->
+</body>
+
+</html>

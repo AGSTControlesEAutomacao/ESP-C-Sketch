@@ -1,0 +1,32 @@
+Alarme Sts Ventilador Z% Maq#
+Alarme Sts Ventilador 2 Z% Maq#
+Alarme Fluxo Ar Z% Maq#
+Alarme Sts Compressor 1 Z% Maq#
+Alarme Sts Compressor 2 Z% Maq#
+Alarme Sts Compressor 3 Z% Maq#
+Alarme Sts Resistencia 1 Z% Maq#
+Alarme Sts Resistencia 2 Z% Maq#
+Alarme Sts Defeito Maquina Z% Maq#
+Bloqueio Maquina Z% Maq#
+Alimentacao Z% Maq#
+Status Ventilador Z% Maq#
+Status Ventilador 2 Z% Maq#
+Fluxo de Ar Z% Maq#
+Compressor 1 Z% Maq#
+Compressor 2 Z% Maq#
+Compressor 3 Z% Maq#
+Resistencia 1 Z% Maq#
+Resistencia 2 Z% Maq#
+Termostado de Segurança Z% Maq#
+Falha Rendimento Z% Maq#
+Alarme Sts Insuflador Z% Maq#
+Alarme Sts Maquina Z% Maq#
+Manutencao Maquina Z% Maq#
+Alarme Sts Umidificador Z% Maq#
+Alarme Filtro Sujo Z% Maq#
+Alarme Resumo Falha Z% Maq#
+Flags Alarme Sts Fluxo D'agua Z% Maq#
+Flags Alarme Sts Valv Cond Z% Maq#
+Flags Alarme Umidificador Z% Maq#
+Falha de Inversor Z% Maq#
+Falha de Comunicacao IrCOM Z% Maq#

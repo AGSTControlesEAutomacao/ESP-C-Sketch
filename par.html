@@ -1,0 +1,1255 @@
+<!DOCTYPE html>
+
+<html lang="pt-br">
+
+<head>
+	<title>Controlador AGST</title>
+	<meta http-equiv="content-type" content="text/html;charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="icon" href="favicon.ico" />
+	<link href="/style.css" rel="stylesheet" />
+	<script src="/jquery-3.6.0.min.js"></script>
+	<script src="/scripts.js"></script>
+</head>
+
+<body>
+	<div class="div-top">
+		<header>
+			<a class=i-menu onclick=openCloseMenu() title=Menu><i>&#xf00b</i></a>
+			<ul class=ul-right>
+				<li><a href=painel.html title="Alertas Ativos"><i>&#xf001</i><span class=ntf></span></a></li>
+				<li><a href=logout.html title=Sair><i>&#xf011</i></a></li>
+			</ul>
+			<nav id="menu-nav">
+			</nav>
+			<script>
+				$(document).ready(function () {
+					ajaxMenu();
+				});
+			</script>
+		</header>
+	</div>
+	<main class="param">
+		<div class="cntnr">
+			<div class="btn-box top">
+				<input class="btn" type="submit" value="Importar" onclick="importAGST()" title="Importa a Aplicação" />
+				<input class="btn" type="submit" value="Exportar" onclick="exportAGST()" title="Exporta a Aplicação" />
+			</div>
+			<div style="display:none" id="importar" class="box-importar"> <input type="file" id="fileinput"
+					onchange="loadFile(this); this.value=null;" accept=".json, .agst">
+			</div>
+			<ul class="tabs" id="tabs">
+				<li style="cursor: pointer !important;" class="act"><a class="tbparzona01">Zona 01</a></li>
+				<li style="cursor: pointer !important;"><a class="tbparzona02">Zona 02</a></li>
+				<li style="cursor: pointer !important;"><a class="tbparzona03">Zona 03</a></li>
+				<li style="cursor: pointer !important;"><a class="tbparzona04">Zona 04</a></li>
+				<li style="cursor: pointer !important;"><a class="tbparger">Gerais</a></li>
+				<li style="cursor: pointer !important;"><a class="tbentradas">Entradas</a></li>
+				<li style="cursor: pointer !important;"><a class="tbsaidas">Saídas</a></li>
+				<li style="cursor: pointer !important;"><a class="tbmaquinas">Máquinas</a></li>
+				<li style="cursor: pointer !important;"><a class="tbsistemas">Sistema</a></li>
+			</ul>
+
+			<form id="sendPar" action="" class="frm" method="post" onsubmit="return canSubmit()">
+				<div class="tb-cnt" id="page">
+					<!-- Copiada via Javascript  -->
+					<div class="item act" id="parzona01">
+						<div class="msg-alrt">
+							<p class="msg">As alterações realizadas ainda não foram salvas. Deseja salvar agora?</p>
+							<div class="btn-box">
+								<input class="btn red" name="sub" type="button" onclick="resetfrm()" value="Não" />
+								<input class="btn grn" name="par" type="submit" value="Sim" title="Sim" />
+							</div>
+						</div>
+						<div class="blk-lft">
+							<div class="tbl-rsp">
+								<!-- Labels gerados dinamicamente via Javascript -->
+								<table id="pz1l" name="zonas" class="othr">
+									<tr>
+										<td><label></label></td>
+										<td><label class="light"></label></td>
+										<td><input type="number" onchange="fixPrecision(this)" class="temp"
+												value="0"><label class="light"></label></td>
+									</tr>
+								</table>
+							</div>
+						</div>
+						<div class="blk-rgt" t>
+							<div class="tbl-rsp">
+								<table id="pz1r" name="zonas" class="othr"></table>
+							</div>
+						</div>
+						<!-- <input type="hidden" name="end" /> -->
+					</div>
+
+					<div class="item" id="parger">
+						<div class="msg-alrt">
+							<p class="msg">As alterações realizadas ainda não foram salvas. Deseja salvar agora?</p>
+							<div class="btn-box">
+								<input class="btn red" name="sub" type="button" onclick=resetfrm() value="Não" />
+								<input class="btn grn" name="pag" type="submit" value="Sim" />
+							</div>
+						</div>
+						<div class="blk-lft">
+							<div class="tbl-rsp">
+								<table id="pgl" class="othr">
+									<tr>
+										<td><label></label></td>
+										<td><label class="light"></label></td>
+										<td><input type="number" onchange="fixPrecision(this)" class="temp"
+												value="0"><label class="light"></label></td>
+									</tr>
+								</table>
+							</div>
+						</div>
+						<div class="blk-rgt">
+							<div class="tbl-rsp">
+								<table id="pgr" class="othr"></table>
+							</div>
+						</div>
+						<!-- <input type="hidden" name="end" /> -->
+					</div>
+
+					<div class="item" id="entradas">
+						<div class="msg-alrt">
+							<p class="msg">As alterações realizadas ainda não foram salvas. Deseja salvar agora?</p>
+							<div class="btn-box">
+								<input class="btn red" name="sub" type="button" onclick=resetfrm() value="Não" />
+								<input class="btn grn" name="por" type="submit" value="Sim" />
+							</div>
+						</div>
+						<div class="blk-lft">
+							<div class="tbl-rsp">
+								<table id="ted">
+									<tr class="tt">
+										<td colspan="5">Entradas Digitais</td>
+									</tr>
+									<tr id="med1">
+										<td><label>ED1</label></td>
+										<td colspan="2">
+											<select class="big" id="ED1" name="ED1" title="Seleciona a função"></select>
+											<select class="min" id="ZE1" name="ZE1" title="Seleciona a zona"
+												style="visibility: hidden;">
+												<option value="0">1</option>
+												<option value="1">2</option>
+												<option value="2">3</option>
+												<option value="3">4</option>
+											</select>
+											<select class="min" id="ME1" name="ME1" title="Seleciona a máquina"
+												style="visibility: hidden;">
+												<option value="1">1</option>
+												<option value="2">2</option>
+												<option value="3">3</option>
+												<option value="4">4</option>
+												<option value="5">5</option>
+												<option value="6">6</option>
+												<option value="7">7</option>
+												<option value="8">8</option>
+											</select>
+										</td>
+										<td colspan="2">
+											<div class="cntnr-chk"><input type="radio" name="LE1" value="1"
+													id="LE1"><label for="LE1">Energizado</label>
+											</div>
+											<div class="cntnr-chk"><input type="radio" name="LE1" value="0"><label
+													for="LE1">Desenergizado</label></div>
+										</td>
+									</tr>
+								</table>
+							</div>
+						</div>
+						<div class="blk-rgt">
+							<div class="tbl-rsp">
+								<table id="teu">
+									<tr class="tt">
+										<td colspan="5">Entradas Universais</td>
+									</tr>
+									<tr id="meu1">
+										<td><label>EU1</label></td>
+										<td colspan="2">
+											<select class="big" id="EU1" name="EU1" title="Seleciona a função"></select>
+											<select class="min" id="ZU1" name="ZU1" title="Seleciona a zona"
+												style="visibility: hidden;">
+												<option value="0">1</option>
+												<option value="1">2</option>
+												<option value="2">3</option>
+												<option value="3">4</option>
+											</select>
+											<select class="min" id="MU1" name="MU1" title="Seleciona a máquina"
+												style="visibility: hidden;">
+												<option value="1">1</option>
+												<option value="2">2</option>
+												<option value="3">3</option>
+												<option value="4">4</option>
+												<option value="5">5</option>
+												<option value="6">6</option>
+												<option value="7">7</option>
+												<option value="8">8</option>
+											</select>
+										</td>
+										<td colspan="2">
+											<select class="med" id="TU1" name="TU1" title="Seleciona o tipo de sensor">
+												<option value="0">NTC 10K</option>
+												<option value="1">Umidade</option>
+												<option value="2">0 a 5 Volts</option>
+												<option value="3">0 a 1 Volts</option>
+												<option value="4">0 a 20mA</option>
+												<option value="5">4 a 20mA</option>
+												<option value="6">Digital HIGH</option>
+												<option value="7">Digital LOW</option>
+											</select>
+											<input type="number" onchange="fixPrecision(this)" value="0.0" name="OE1"
+												step=".1" class="temp" title="Ajusta o offset">
+										</td>
+									</tr>
+								</table>
+							</div>
+						</div>
+					</div>
+
+					<div class="item" id="saidas">
+						<div class="msg-alrt">
+							<p class="msg">As alterações realizadas ainda não foram salvas. Deseja salvar agora?</p>
+							<div class="btn-box">
+								<input class="btn red" name="sub" type="button" onclick=resetfrm() value="Não" />
+								<input class="btn grn" name="por" type="submit" value="Sim" />
+							</div>
+						</div>
+						<div class="blk-lft">
+							<div class="tbl-rsp">
+								<table id="tsd">
+									<tr class="tt">
+										<td colspan="5">Saidas Digitais</td>
+									</tr>
+									<tr id="msd1">
+										<td><label>SD1</label></td>
+										<td colspan="2">
+											<select class="big" id="SD1" name="SD1" title="Seleciona a função"></select>
+											<select class="min" id="ZS1" name="ZS1" title="Seleciona a zona"
+												style="visibility: hidden;">
+												<option value="0">1</option>
+												<option value="1">2</option>
+												<option value="2">3</option>
+												<option value="3">4</option>
+											</select>
+											<select class="min" id="MS1" name="MS1" title="Seleciona a máquina"
+												style="visibility: hidden;">
+												<option value="1">1</option>
+												<option value="2">2</option>
+												<option value="3">3</option>
+												<option value="4">4</option>
+												<option value="5">5</option>
+												<option value="6">6</option>
+												<option value="7">7</option>
+												<option value="8">8</option>
+											</select>
+										</td>
+										<td colspan="2">
+											<div class="cntnr-chk"><input type="radio" name="LS1" value="1"
+													id="LS1"><label for="LS1">Energizado</label>
+											</div>
+											<div class="cntnr-chk"><input type="radio" name="LS1" value="0"><label
+													for="LS1">Desenergizado</label></div>
+										</td>
+									</tr>
+								</table>
+							</div>
+						</div>
+						<div class="blk-rgt">
+							<div class="tbl-rsp">
+								<table id="tsu">
+									<tr class="tt">
+										<td colspan="5">Saidas Universais</td>
+									</tr>
+									<tr id="msu1">
+										<td><label>SU1</label></td>
+										<td colspan="2">
+											<select class="big" id="SU1" name="SU1" title="Seleciona a função"></select>
+											<select class="min" id="ZA1" name="ZA1" title="Seleciona a zona"
+												style="visibility: hidden;">
+												<option value="0">1</option>
+												<option value="1">2</option>
+												<option value="2">3</option>
+												<option value="3">4</option>
+											</select>
+											<select class="min" id="MA1" name="MA1" title="Seleciona a máquina"
+												style="visibility: hidden;">
+												<option value="1">1</option>
+												<option value="2">2</option>
+												<option value="3">3</option>
+												<option value="4">4</option>
+												<option value="5">5</option>
+												<option value="6">6</option>
+												<option value="7">7</option>
+												<option value="8">8</option>
+											</select>
+										</td>
+										<td colspan="2">
+											<select class="med" id="TA1" name="TA1" title="Seleciona o tipo de sensor">
+												<option value="0">NTC 10K</option>
+												<option value="1">Umidade</option>
+												<option value="2">0 a 5 Volts</option>
+												<option value="3">0 a 1 Volts</option>
+												<option value="4">0 a 20mA</option>
+												<option value="5">4 a 20mA</option>
+												<option value="6">Digital HIGH</option>
+												<option value="7">Digital LOW</option>
+											</select>
+											<input type="number" onchange="fixPrecision(this)" value="0.0" name="OS1"
+												step=".1" class="temp" title="Ajusta o offset">
+										</td>
+									</tr>
+								</table>
+							</div>
+						</div>
+					</div>
+
+					<div class="item" id="maquinas">
+						<div class="msg-alrt">
+							<p class="msg">As alterações realizadas ainda não foram salvas. Deseja salvar agora?</p>
+							<div class="btn-box">
+								<input class="btn red" name="sub" type="button" onclick="resetfrm()" value="Não">
+								<input class="btn grn" name="maq" type="submit" value="Sim">
+							</div>
+						</div>
+						<div class="blk-lft">
+							<div class="tbl-rsp">
+								<table id="maqio" class="cntr">
+									<tbody>
+										<tr class="tt">
+											<td>Habilita Maquina</td>
+											<td>Bloqueio</td>
+										</tr>
+										<tr id="mhio1" class="row">
+											<td><label>Zona 1 Maquina 1</label></td>
+											<td><input type="checkbox" id="HZ1M1" name="HZ1M1" value="on"><label
+													class="hidden">Habilitar</label></td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+						<div class="blk-rgt">
+							<div class="tbl-rsp">
+								<table id="maqir" class="cntr">
+									<tbody>
+										<tr class="tt">
+											<td>IRCOM</td>
+											<td>Restart</td>
+											<td>Emergência</td>
+										</tr>
+										<tr id="mhir1" class="row">
+											<td><label>IrCom 1</label></td>
+											<td><input type="checkbox" id="RM1-IR" name="RM1" value="on"><label
+													class="hidden">Restart</label>
+											</td>
+											<td><input type="checkbox" id="EM1-IR" name="EM1" value="on"><label
+													class="hidden">Emergência</label></td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+						<!-- <input type="hidden" name="end" /> -->
+					</div>
+
+					<div class="item" id="sistemas">
+						<div class="msg-alrt">
+							<p class="msg">As alterações realizadas ainda não foram salvas. Deseja salvar agora?</p>
+							<div class="btn-box">
+								<input class="btn red" name="sub" type="button" onclick="resetfrm()" value="Não">
+								<input class="btn grn" name="sis" type="submit" value="Sim">
+							</div>
+						</div>
+						<div class="blk-lft">
+							<div class="tbl-rsp">
+								<table>
+									<tbody>
+										<tr class="row">
+											<td><label>Numero de Zonas</label></td>
+											<td>
+												<select class="big" name="ZONAS" id="ZONAS">
+													<option value="1">1</option>
+													<option value="2">2</option>
+													<option value="3">3</option>
+													<option value="4">4</option>
+												</select>
+											</td>
+										</tr>
+										<tr class="row">
+											<td><label>Desumidificação</label></td>
+											<td><input type="checkbox" id="DU" name="DU" value="on"></td>
+										</tr>
+										<tr class="row">
+											<td><label>Economizador</label></td>
+											<td>
+												<input type="checkbox" id="EC" name="EC" value="on">
+												<input type="checkbox" id="EC2" name="EC2" value="on">
+												<input type="checkbox" id="EC3" name="EC3" value="on">
+												<input type="checkbox" id="EC4" name="EC4" value="on">
+												<label for="EC4" class="light">Habilita [Zonas 1..4]</label><br>
+												<input type="checkbox" id="BEC" name="BEC" value="on">
+												<label for="BEC" class="ligh">Bloqueio de Economizador</label><br>
+											</td>
+										</tr>
+										<tr class="row">
+											<td><label>Invasão</label></td>
+											<td>
+												<input type="checkbox" id="IV" name="IV" value="on">
+											</td>
+										</tr>
+										<tr class="row">
+											<td><label>Bloqueio por Defeito</label></td>
+											<td><input type="checkbox" id="BQ" name="BQ" value="on"></td>
+										</tr>
+										<tr class="row">
+											<td><label>Emergência</label></td>
+											<td>
+												<input type="checkbox" id="EH" name="EH" value="on">
+												<label for="EH" class="light">Habilita</label><br>
+												<input type="checkbox" id="ET" name="ET" value="on">
+												<label for="ET" class="light">Temperatura Externa</label><br>
+												<input type="checkbox" id="EV" name="EV" value="on">
+												<label for="EV" class="light">Ventilador Externo</label><br>
+												<input type="checkbox" id="EF" name="EF" value="on">
+												<label for="EF" class="light">Teste de Fluxo</label>
+											</td>
+										</tr>
+										<tr class="row">
+											<td><label>Modo Ventilador</label></td>
+											<td>
+												<input type="checkbox" id="VD" name="VD" value="on">
+												<label for="VD" class="light">Desligar</label><br>
+												<input type="checkbox" id="VE" name="VE" value="on">
+												<label for="VE" class="light">Externa</label><br>
+												<input type="checkbox" id="VT" name="VT" value="on">
+												<input type="checkbox" id="VT2" name="VT2" value="on">
+												<input type="checkbox" id="VT3" name="VT3" value="on">
+												<input type="checkbox" id="VT4" name="VT4" value="on">
+												<label for="VT4" class="light">Total [Zonas 1..4]</label>
+											</td>
+										</tr>
+										<tr class="row">
+											<td><label>Modo Compressor</label></td>
+											<td>
+												<input type="checkbox" id="CI" name="CI" value="on">
+												<label for="CI" class="light">Bloqueio Independente</label><br>
+												<input type="checkbox" id="CR" name="CR" value="on">
+												<label for="CR" class="light">Rodízio</label><br>
+												<input type="checkbox" id="CM" name="CM" value="on">
+												<input type="checkbox" id="CM2" name="CM2" value="on">
+												<input type="checkbox" id="CM3" name="CM3" value="on">
+												<input type="checkbox" id="CM4" name="CM4" value="on">
+												<label for="CM4" class="light">Bloqueio por Máquina [Zonas 1..4]</label>
+											</td>
+										</tr>
+										<tr class="row">
+											<td><label>Modo Painel</label></td>
+											<td>
+												<select class="big" name="MP" id="MP">
+													<option value="0">Umidade Ambiente</option>
+													<option value="1">Pressão Ambiente</option>
+												</select>
+											</td>
+										</tr>
+										<tr class="row">
+											<td><label>Alarme Sonoro</label></td>
+											<td>
+												<div class="cntnr-chk">
+													<input type="radio" name="AS" id="AS" value="0">
+													<label for="AS">Desligado</label>
+												</div>
+												<div class="cntnr-chk">
+													<input type="radio" name="AS" value="1">
+													<label for="AS">Ligado</label>
+												</div>
+												<div class="cntnr-chk">
+													<input type="radio" name="AS" value="3">
+													<label for="AS">Temporizado</label>
+												</div>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+								<table id="mod-table">
+									<thead>
+										<tr class="tt">
+											<th colspan="3">Modulos</th>
+										</tr>
+									</thead>
+									<tbody>
+										<!-- Clonado via JavaScript -->
+										<tr>
+											<td><label>Modulo Interno</label></td>
+											<td><select id="MD0" disabled
+													style="-webkit-appearance: none;-moz-appearance: none;appearance: none;">
+													<option value=0>SEM MODULO</option>
+													<option value=1>00-16-16-00</option>
+													<option value=2>00-08-08-00</option>
+													<option value=3>08-00-00-00</option>
+													<option value=4>08-00-00-04</option>
+													<option value=5>08-16-16-04</option>
+													<option value=6>08-08-08-00</option>
+													<option value=7>08-08-08-04</option>
+													<option value=8>-</option>
+													<option value=9>06-11-12-00</option>
+													<option value=10>06-03-04-00</option>
+													<option value=11>IrCom DEF</option>
+													<option value=12>IrCom SLA</option>
+													<option value=13>IrCom SLB</option>
+													<option value=14>-</option>
+													<option value=15>03-07-05-00</option>
+													<option value=16>06-11-10-02</option>
+												</select></td>
+											<td></td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+						<div class="blk-rgt">
+							<div class="tbl-rsp">
+								<table class="differ">
+									<tbody>
+										<tr>
+											<td class="au"><label>Relógio</label></td>
+											<td class="ctr w-50">
+												<div class="clock">
+													<div class="hr" id="hours" disabled="">00</div>
+													<div class="min" id="mins" disabled="">00</div>
+													<div class="seg" id="secs" disabled="">00</div>
+													<p class="date" disabled="">
+														<strong id="weekday">Segunda-feira</strong>, <span
+															id="fulldate">1 Janeiro 2022</span>
+													</p>
+												</div>
+											</td>
+											<td class="ctr">
+												<input class="btn wht" onclick="sendTime()" value="Sincronizar">
+											</td>
+										</tr>
+										<tr>
+											<td class="au"><label>Controle Horario</label></td>
+											<td class="ctr w-50">
+												<select class="big" name="P1028" id="P1028" onchange="changeContHor()">
+													<option value="0" selected="">0 - Desabilitado</option>
+													<option value="1">1 - Segunda a Domingo</option>
+													<option value="2">2 - Segunda a Sábado</option>
+													<option value="3">3 - Segunda a Sexta</option>
+													<option value="4">4 - Sábado e Domingo</option>
+													<option value="5">5 - Sábado</option>
+													<option value="6">6 - Domingo</option>
+												</select>
+											</td>
+											<td class="break ctr nturno" id="turno-numero" style="display: none;">
+												<label class="light">Número de turnos</label>&nbsp;
+												<select class="min" id="P1029" name="P1029" onchange="changeContHor()">
+													<option value="1" selected>1</option>
+													<option value="2">2</option>
+													<option value="3">3</option>
+												</select>
+											</td>
+										</tr>
+										<tr class="ctr">
+											<td class="turno-item1" id="turno-item1" style="display: none;">
+												<label class="trn">Turno 1</label>
+												<div class="trn-blk">
+													<div class="lft-trn"><label class="light">Liga</label><br>
+														<input class="hr" name="P1030" id="P1030" type="number" max="23"
+															value="0">:<input class="hr" name="P1031" id="P1031"
+															type="number" max="59" min="0" value="0">
+													</div>
+													<div class="rgt-trn"><label class="light">Desliga</label><br><input
+															class="hr" name="P1032" id="P1032" type="number" max="23"
+															min="0" value="5">:<input class="hr" name="P1033" id="P1033"
+															type="number" max="59" min="0" value="0">
+													</div>
+												</div>
+											</td>
+											<td class="turno-item2" id="turno-item2" style="display: none;">
+												<label class="trn">Turno 2</label>
+												<div class="trn-blk">
+													<div class="lft-trn"><label class="light">Liga</label><br><input
+															class="hr" name="P1034" id="P1034" type="number" max="23"
+															value="0">:<input class="hr" name="P1035" id="P1035"
+															type="number" max="59" min="0" value="0">
+													</div>
+													<div class="rgt-trn"><label class="light">Desliga</label><br><input
+															class="hr" name="P1036" id="P1036" type="number" max="23"
+															min="0" value="0">:<input class="hr" name="P1037" id="P1037"
+															type="number" max="59" min="0" value="0">
+													</div>
+												</div>
+											</td>
+											<td class="turno-item3" id="turno-item3" style="display: none;">
+												<label class="trn">Turno 3</label>
+												<div class="trn-blk">
+													<div class="lft-trn"><label class="light">Liga</label><br><input
+															class="hr" name="P1038" id="P1038" type="number" max="23"
+															value="0">:<input class="hr" name="P1039" id="P1039"
+															type="number" max="59" min="0" value="0">
+													</div>
+													<div class="rgt-trn"><label class="light">Desliga</label><br><input
+															class="hr" name="P1040" id="P1040" type="number" max="23"
+															min="0" value="0">:<input class="hr" name="P1041" id="P1041"
+															type="number" max="59" min="0" value="0">
+													</div>
+												</div>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div id="checkboxes-escondidos" style="display:none">
+					<!-- Desumidificação -->
+					<input type="text" style="display:none" id="DU-hidden" name="DU" value="off" />
+					<!-- Economizador -->
+					<input type="text" style="display:none" id="EC-hidden" name="EC" value="off" />
+					<input type="text" style="display:none" id="EC2-hidden" name="EC2" value="off" />
+					<input type="text" style="display:none" id="EC3-hidden" name="EC3" value="off" />
+					<input type="text" style="display:none" id="EC4-hidden" name="EC4" value="off" />
+					<input type="text" style="display:none" id="BEC-hidden" name="BEC" value="off" />
+					<!-- Invasão -->
+					<input type="text" style="display:none" id="IV-hidden" name="IV" value="off" />
+					<!-- Bloq. Def. -->
+					<input type="text" style="display:none" id="BQ-hidden" name="BQ" value="off" />
+					<!-- Emergencia -->
+					<input type="text" style="display:none" id="EH-hidden" name="EH" value="off" />
+					<input type="text" style="display:none" id="ET-hidden" name="ET" value="off" />
+					<input type="text" style="display:none" id="EV-hidden" name="EV" value="off" />
+					<input type="text" style="display:none" id="EF-hidden" name="EF" value="off" />
+					<!-- Modo Vent. -->
+					<input type="text" style="display:none" id="VD-hidden" name="VD" value="off" />
+					<input type="text" style="display:none" id="VE-hidden" name="VE" value="off" />
+					<input type="text" style="display:none" id="VT-hidden" name="VT" value="off" />
+					<input type="text" style="display:none" id="VT2-hidden" name="VT2" value="off" />
+					<input type="text" style="display:none" id="VT3-hidden" name="VT3" value="off" />
+					<input type="text" style="display:none" id="VT4-hidden" name="VT4" value="off" />
+					<!-- Modo Com. -->
+					<input type="text" style="display:none" id="CI-hidden" name="CI" value="off" />
+					<input type="text" style="display:none" id="CR-hidden" name="CR" value="off" />
+					<input type="text" style="display:none" id="CM-hidden" name="CM" value="off" />
+					<input type="text" style="display:none" id="CM2-hidden" name="CM2" value="off" />
+					<input type="text" style="display:none" id="CM3-hidden" name="CM3" value="off" />
+					<input type="text" style="display:none" id="CM4-hidden" name="CM4" value="off" />
+					<!-- Maquinas -->
+				</div>
+			</form>
+		</div>
+		<div class="loader-overlay" id="loaderOverlay">
+			<div class="table-loader"></div>
+		</div>
+	</main>
+	<script>
+		const MESES = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+		let diaSemana = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sabado'];
+
+		const MAXZONAS = 4;
+		const MAXIO = {
+			EU: 48,
+			SU: 48,
+			ED: 64,
+			SD: 64
+		};
+		var ioText = {
+			EU: [],
+			SU: [],
+			ED: [],
+			SD: []
+		};
+		var receivedAll = false;
+		var sendingTime = false;
+		var clpTime = {
+			dateObj: new Date(),
+			clpData: {}
+		};
+		let weekDayDiff = 0;
+		let formRevalidation = false;
+
+		function canSubmit() {
+			if (receivedAll)
+				return true;
+			else {
+				alert('Aguarde a recepção dos Dados.');
+				return false;
+			}
+		}
+		function mountParZ() {
+			return new Promise((resolve, reject) => {
+				//Duplica as tabelas vazias das zonas
+				let zona = $('#parzona01').clone();
+				for (let i = 1; i < MAXZONAS; i++) {
+					let id = `parzona0${i + 1}`;
+					zona.attr('id', id);
+					zona.removeClass('act');
+					zona.find('table').first().find('tr').remove(); //Tira a linha da primeira tabela das copias.
+					zona.appendTo('#page');
+					let table = zona.find('table');
+					table.first().attr('id', `pz${i + 1}l`); //Como só tem 2 da pra usar first e last
+					table.last().attr('id', `pz${i + 1}l`); //Como só tem 2 da pra usar first e last
+					zona = zona.clone();
+				}
+
+				//Requisita os textos das linhas
+				$.ajax({
+					url: "fpz.json",
+					method: "GET",
+					dataType: "json",
+					success: function (response) {
+						let tabelas = $(document.getElementsByName('zonas'));
+						let row = $('#pz1l tr');
+						response.forEach((el, i) => {
+							for (let j = 0; j < MAXZONAS; j++) {
+								let labels = row.find('label');
+								$(labels[0]).first().text(`P${(i + 1) + (j * 100)}`);
+								$(labels[1]).text(el.name);
+								$(labels[2]).last().text(el.tp);
+
+								let inputs = row.find('input');
+								$(inputs[0]).attr('name', `P${(i + 1) + (j * 100)}`);
+								$(inputs[0]).attr('id', `P${(i + 1) + (j * 100)}`);
+								$(inputs[0]).attr('step', el.step);
+								$(inputs[0]).attr('min', el.min);
+								$(inputs[0]).attr('max', el.max);
+
+								if ((i + 1) < 24)
+									row.appendTo($(tabelas[j * 2]));
+								else
+									row.appendTo($(tabelas[(j * 2) + 1]));
+
+								row = row.clone();
+							}
+						});
+						resolve();
+					},
+					error: function () {
+						reject();
+					}
+				});
+			});
+		}
+		function mountParG() {
+			return new Promise((resolve, reject) => {
+				//Requisita os textos das linhas
+				$.ajax({
+					url: "fpg.json",
+					method: "GET",
+					dataType: "json",
+					success: function (response) {
+						let row = $('#pgl tr');
+						response.forEach((el, i) => {
+							let labels = row.find('label');
+							$(labels[0]).first().text(`P${i + 1001}`);
+							$(labels[1]).text(el.name);
+							$(labels[2]).last().text(el.tp);
+
+							let inputs = row.find('input');
+							$(inputs[0]).attr('name', `P${i + 1001}`);
+							$(inputs[0]).attr('id', `P${i + 1001}`);
+							$(inputs[0]).attr('step', el.step);
+							$(inputs[0]).attr('min', el.min);
+							$(inputs[0]).attr('max', el.max);
+
+							if ((i + 1001) < 1024)
+								row.appendTo('#pgl');
+							else
+								row.appendTo('#pgr');
+
+							row = row.clone();
+						});
+						resolve();
+					},
+					error: function () {
+						reject();
+					}
+				});
+			});
+		}
+
+		function enableZM() {
+			let option = this.options[this.selectedIndex];
+			let el = $(this).next();
+
+			if ($(option).attr('z') == 'true')
+				el.css('visibility', '');
+			else
+				el.css('visibility', 'hidden');
+
+			el = el.next();
+			if ($(option).attr('m') == 'true')
+				el.css('visibility', '');
+			else
+				el.css('visibility', 'hidden');
+
+		}
+		function optionCreator(el, i, type) {
+			let item = $('<option />').val(i);
+			if (el.includes('Z%'))
+				item.attr('z', true);
+			if (el.includes('Maq#'))
+				item.attr('m', true);
+
+			item.text(el.replaceAll(' Z%', '').replaceAll(' Maq#', ''));
+			$(`#${type}1`).append(item);
+		}
+		/**
+		 * Monta os campos de EU, SU, ED e SD
+		 * 
+		 * @param {string} type "EU/ED" para entradas "SU/SD" para saidas. (Default: EU)
+		 */
+		function mountES(type = "EU") {
+			const ZONEID = {
+				EU: 'ZU',
+				SU: 'ZA',
+				ED: 'ZE',
+				SD: 'ZS'
+			};
+			const MAQID = {
+				EU: 'MU',
+				SU: 'MA',
+				ED: 'ME',
+				SD: 'MS'
+			};
+			const TPID = {
+				EU: 'TU',
+				SU: 'TA'
+			};
+			const LGCID = {
+				ED: 'LE',
+				SD: 'LS'
+			}
+			const OFSID = {
+				EU: 'OE',
+				SU: 'OS'
+			}
+
+			return new Promise((resolve, reject) => {
+				//Requisita os textos dos selects
+				$.ajax({
+					url: `f${type.toLowerCase()}.txt`,
+					method: "GET",
+					dataType: "text",
+					success: function (response) {
+						ioText[type] = response.split('\n');
+						ioText[type].pop(); //Tira o ultimo item que é vazio.
+
+						ioText[type].forEach((el, i) => optionCreator(el, i, type));
+
+						$(`#${type}1`).on('change', enableZM);
+						for (let i = 1; i < MAXIO[type]; i++) {
+							let row = $(`#m${type.toLowerCase()}1`).clone();
+							row.attr('id', `m${type.toLowerCase()}${i + 1}`);
+
+							$(row.find('label')[0]).text(`${type}${i + 1}`);
+
+							let select = $(row.find('select')[0]);
+							select.attr('id', `${type}${i + 1}`);
+							select.attr('name', `${type}${i + 1}`);
+							select.on('change', enableZM); //Eventos não são clonados
+
+							select = $(row.find('select')[1]);
+							select.attr('id', `${ZONEID[type]}${i + 1}`);
+							select.attr('name', `${ZONEID[type]}${i + 1}`);
+
+							select = $(row.find('select')[2]);
+							select.attr('id', `${MAQID[type]}${i + 1}`);
+							select.attr('name', `${MAQID[type]}${i + 1}`);
+
+							if (type.includes('U')) { //Analogicas
+								select = $(row.find('select')[3]);
+								select.attr('id', `${TPID[type]}${i + 1}`);
+								select.attr('name', `${TPID[type]}${i + 1}`);
+
+								let input = $(row.find('input')[0]);
+								input.attr('id', `${OFSID[type]}${i + 1}`);
+								input.attr('name', `${OFSID[type]}${i + 1}`);
+							} else { //Digitais
+								let radio = $(row.find(':radio')[0]);
+								radio.attr('id', `${LGCID[type]}${i + 1}`); //Só pode 1 elemento com cada ID, primeiro radio com ID correto já serve
+								radio.attr('name', `${LGCID[type]}${i + 1}`);
+
+								radio = $(row.find(':radio')[1]);
+								radio.attr('name', `${LGCID[type]}${i + 1}`);
+							}
+
+							row.appendTo(`#t${type.toLowerCase()}`);
+						}
+
+						resolve();
+					},
+					error: function () {
+						reject();
+					}
+				});
+			});
+		}
+
+		function mountMaq() {
+			return new Promise((resolve, reject) => {
+				//Requisita os textos dos selects
+				$.ajax({
+					url: `data-from-clp?CFG=1`,
+					method: "GET",
+					dataType: "json",
+					success: function (response) {
+						for (let i = 1; i < 16; i++) {
+							let module = response.CFG[`MD${i + 1}`];
+							//IRCOM
+							let row = $(`#mhir1`).clone();
+							row.attr('id', `mhir${i + 1}`);
+
+							let label = $(row.find('label')[0]);
+							label.text(`IrCom ${i + 1}`);
+							if (module < 11 || module > 13) {
+								label.css('text-decoration', 'line-through');
+							}
+
+							let input = $(row.find('input')[0]); //1
+							input.attr('id', `RM${i + 1}`);
+							input.attr('name', `RM${i + 1}`);
+							if (module < 11 || module > 13) {
+								input.prop('disabled', 'true');
+								input.css('background', '#555555');
+							}
+
+							input = $(row.find('input')[1]); //2
+							input.attr('id', `EM${i + 1}`);
+							input.attr('name', `EM${i + 1}`);
+							if (module < 11 || module > 13) {
+								input.prop('disabled', 'true');
+								input.css('background', '#555555');
+							}
+
+							row.appendTo(`#maqir`);
+
+							//Adiciona os "checkboxes ocultos"
+							let hiddenInput = $(`<input type="text" style="display:none" id="RM${i + 1}-hidden" name="RM${i + 1}"/>`).val('off');
+							hiddenInput.appendTo('#checkboxes-escondidos');
+							hiddenInput = $(`<input type="text" style="display:none" id="EM${i + 1}-hidden" name="EM${i + 1}"/>`).val('off');
+							hiddenInput.appendTo('#checkboxes-escondidos');
+						}
+						for (let j = 0; j < 4; j++) {
+							$(`<tr class="row"><th colspan="2"><label>Zona ${j + 1}</label></th></tr>`).appendTo(`#maqio`);
+							for (let i = 0; i < 8; i++) {
+								//Habilita Maquina
+								let row = $(`#mhio1`).clone();
+								row.removeAttr('id');
+
+								let label = $(row.find('label')[0]);
+								label.text(`Maquina ${i + 1}`);
+
+								let input = $(row.find('input')[0]);
+								input.attr('id', `HZ${j}M${i}`);
+								input.attr('name', `HZ${j}M${i}`);
+
+								row.appendTo(`#maqio`);
+
+								//Adiciona os "checkboxes ocultos"
+								let hiddenInput = $(`<input type="text" style="display:none" id="HZ${j}M${i}-hidden" name="HZ${j}M${i}"/>`).val('off');
+								hiddenInput.appendTo('#checkboxes-escondidos');
+							}
+						}
+						$(`#mhio1`).remove();
+
+						//Ajusta os primeiros
+						let module = response.CFG[`MD1`];
+						//IRCOM
+						let row = $(`#mhir1`);
+						let label = $(row.find('label')[0]);
+						if (module < 11 || module > 13) {
+							label.css('text-decoration', 'line-through');
+						}
+						let input = $(row.find('input')[0]);
+						if (module < 11 || module > 13) {
+							input.prop('disabled', 'true');
+							input.css('background', '#555555');
+						}
+						else {
+							input.attr('id', `HM1`);
+						}
+						input = $(row.find('input')[1]);
+						if (module < 11 || module > 13) {
+							input.prop('disabled', 'true');
+							input.css('background', '#555555');
+						}
+						else {
+							input.attr('id', `RM1`);
+						}
+						input = $(row.find('input')[2]);
+						if (module < 11 || module > 13) {
+							input.prop('disabled', 'true');
+							input.css('background', '#555555');
+						}
+						else {
+							input.attr('id', `EM1`);
+						}
+
+						//IOs Versa
+						row = $(`#mhio1`);
+						label = $(row.find('label')[0]);
+						if (module != 15) {
+							label.css('text-decoration', 'line-through');
+						}
+						input = $(row.find('input')[0]);
+						if (module != 15) {
+							input.prop('disabled', 'true');
+							input.css('background', '#555555');
+						}
+						else {
+							input.attr('id', `HM1`);
+						}
+						input = $(row.find('input')[1]);
+						if (module != 15) {
+							input.prop('disabled', 'true');
+							input.css('background', '#555555');
+						}
+						else {
+							input.attr('id', `RM1`);
+						}
+						input = $(row.find('input')[2]);
+						if (module != 15) {
+							input.prop('disabled', 'true');
+							input.css('background', '#555555');
+						}
+						else {
+							input.attr('id', `EM1`);
+						}
+
+						//Adiciona os "checkboxes ocultos"
+						let hiddenInput = $(`<input type="text" style="display:none" id="HM1-hidden" name="HM1"/>`).val('off');
+						hiddenInput.appendTo('#checkboxes-escondidos');
+						hiddenInput = $(`<input type="text" style="display:none" id="RM1-hidden" name="RM1"/>`).val('off');
+						hiddenInput.appendTo('#checkboxes-escondidos');
+						hiddenInput = $(`<input type="text" style="display:none" id="EM1-hidden" name="EM1"/>`).val('off');
+						hiddenInput.appendTo('#checkboxes-escondidos');
+
+						for (let i = 0; i < 16; i++) {
+							let clonedElement = $($('#mod-table').children().children()[1]).clone();
+							clonedElement.find('label').text(`Modulo ${i + 1}`);
+							clonedElement.find('select').attr('id', `MD${i + 1}`);
+
+							clonedElement.appendTo('#mod-table');
+						}
+
+						resolve();
+					},
+					error: function () {
+						reject();
+					}
+				});
+			});
+		}
+
+		function refreshTime() {
+			$('#hours').text(clpTime.dateObj.getHours().toString().padStart(2, '0'));
+			$('#mins').text(clpTime.dateObj.getMinutes().toString().padStart(2, '0'));
+			$('#secs').text(clpTime.dateObj.getSeconds().toString().padStart(2, '0'));
+
+			$('#fulldate').text(`${clpTime.dateObj.getDate()} ${MESES[clpTime.dateObj.getMonth()]} ${clpTime.dateObj.getFullYear()}`);
+			$('#weekday').text(`${diaSemana[clpTime.dateObj.getDay()]}`); //Como fazer pra atualizar direito no fim do dia?
+
+			clpTime.dateObj = new Date(clpTime.dateObj.getTime() + 1000);
+			setTimeout(refreshTime, 1000);
+		}
+
+		function sendTime() {
+			if (!sendingTime) {
+				sendingTime = true;
+				let timeToSend = new Date();
+
+				new Promise((resolve, reject) => {
+					$.ajax({
+						url: 'setclock',
+						method: 'POST',
+						dataType: 'text',
+						data: {
+							H: timeToSend.getHours(),
+							M: timeToSend.getMinutes(),
+							MD: timeToSend.getDate(),
+							MO: timeToSend.getMonth() + 1,
+							S: timeToSend.getSeconds(),
+							WD: timeToSend.getDay(),
+							Y: timeToSend.getFullYear() - 2000
+						},
+						success: function (response) {
+							//Desrotaciona o dia da semana.
+							if (weekDayDiff < 0) {
+								diaSemana = rotateArrayRight(diaSemana, Math.abs(weekDayDiff));
+							}
+							else {
+								diaSemana = rotateArrayLeft(diaSemana, weekDayDiff);
+							}
+							weekDayDiff = 0;
+							resolve();
+						},
+						statusCode: {
+							401: () => {
+								reject("Sessão Encerrada, realize login novamente.");
+							},
+							403: () => {
+								reject("Sem acesso, realize login novamente.");
+							},
+							500: () => {
+								reject("Erro ao enviar hora do sistema.");
+							}
+						},
+						error: function () {
+							reject("Erro ao enviar hora do sistema.");
+						}
+					});
+				}).then(() => {
+					clpTime.dateObj = timeToSend;
+
+					clpTime.clpData.H = timeToSend.getHours();
+					clpTime.clpData.M = timeToSend.getMinutes();
+					clpTime.clpData.MD = timeToSend.getDate();
+					clpTime.clpData.MO = timeToSend.getMonth() + 1;
+					clpTime.clpData.S = timeToSend.getSeconds();
+					clpTime.clpData.WD = timeToSend.getDay();
+					clpTime.clpData.Y = timeToSend.getFullYear() - 2000;
+
+					sendingTime = false;
+				}).catch((err) => {
+					alert(err);
+					sendingTime = false;
+				});
+			}
+			else {
+				alert('Aguarde, sincronização em progresso.');
+			}
+		}
+
+		function changeContHor() {
+			let contHor = $('#P1028').val();
+			let contHorNTurno = $('#P1029').val();
+
+			$("#turno-numero").css('display', contHor != 0 ? '' : 'none');
+
+			for (let i = 0; i < 3; i++) {
+				$(`#turno-item${i + 1}`).css('display', ((contHorNTurno > i && contHor != 0) ? '' : 'none'));
+			}
+		}
+
+		function fillValues() {
+			return new Promise((resolve, reject) => {
+				$.ajax({
+					url: "data-from-clp?PZ1=1&PZ2=1&PZ3=1&PZ4=1&PG=1&CFG=1&EU=1&SU=1&ED=1&SD=1&TIME=1",
+					method: "GET",
+					dataType: "json",
+					success: function (response) {
+						response.PAR = {
+							...response.PZ1,
+							...response.PZ2 ?? {},
+							...response.PZ3 ?? {},
+							...response.PZ4 ?? {},
+							...response.PG
+						};
+						// Iterar sobre as chaves do JSON e preencher os campos correspondentes
+						formFieldsFiller(response.PAR);
+						changeContHor(); //Ajusta os campos do controle horario.
+
+						formFieldsFiller(response.CFG);
+
+						formFieldsFiller(response.ED);
+						$('select[id^="ED"]').trigger('change'); //Triga o change pra mostrar os campos de zona e maquina se necessario.
+
+						formFieldsFiller(response.EU);
+						$('select[id^="EU"]').trigger('change');
+
+						formFieldsFiller(response.SD);
+						$('select[id^="SD"]').trigger('change');
+
+						formFieldsFiller(response.SU);
+						$('select[id^="SU"]').trigger('change');
+
+						clpTime.clpData = response.TIME;
+						clpTime.dateObj = new Date(clpTime.clpData.Y + 2000, clpTime.clpData.MO - 1, clpTime.clpData.MD, clpTime.clpData.H, clpTime.clpData.M, clpTime.clpData.S);
+						weekDayDiff = clpTime.dateObj.getDay() - clpTime.clpData.WD;
+						if (weekDayDiff < 0) {
+							diaSemana = rotateArrayLeft(diaSemana, Math.abs(weekDayDiff));
+						}
+						else {
+							diaSemana = rotateArrayRight(diaSemana, weekDayDiff);
+						}
+						refreshTime(); //Inicia refresh do tempo
+
+						resolve();
+					},
+					error: function () {
+						alert("Erro ao carregar parametros do sistema.");
+						reject();
+					}
+				});
+			});
+		}
+
+		$(document).ready(async function () {
+			$('#loaderOverlay').show();
+
+			//TODO: Tratar os erros
+			await mountParZ();
+			await mountParG();
+			await mountES('EU');
+			await mountES('SU');
+			await mountES('ED');
+			await mountES('SD');
+			await mountMaq();
+
+			await fillValues();
+
+			//Adiciona listeners das abas
+			addTabListener();
+
+			//Adiciona listener de troca nos checkBoxes
+			$("input:checkbox").on('change', checkBoxListener);
+			//Triga a verificação dos Checkboxes.
+			checkBoxListener();
+			//Coloca um listener em erro de envio do form para trocar para uma Aba que esteja com problema.
+			$('input').on('invalid', function (err) {
+				if (!formRevalidation) {
+					formRevalidation = true;
+					console.log(`Valor invalido em ${err.target}`);
+					let el = $(err.target);
+					let elName = el.attr('name');
+					let tab;
+					if (elName.startsWith('P')) {
+						tab = parseInt(elName.substring(1, elName.length));
+						if (tab < 100) {
+							tab = 'parzona01';
+						} else if (tab < 200) {
+							tab = 'parzona02';
+						} else if (tab < 300) {
+							tab = 'parzona03';
+						} else if (tab < 400) {
+							tab = 'parzona04';
+						} else {
+							tab = 'parger';
+						}
+					}
+					else if (elName.startsWith('EU') || elName.startsWith('ED')) {
+						tab = 'entradas';
+					}
+					else if (elName.startsWith('SU') || elName.startsWith('SD')) {
+						tab = 'saidas';
+					}
+					$(`.tb${tab}`).trigger('click'); //Troca para UMA das abas com problema.
+
+					setTimeout(() => {
+						document.querySelector('form').reportValidity();
+						formRevalidation = false;
+					}, 500); //Força nova validação do form para exibir o erro.
+				}
+			});
+			$('form').on('submit', function () {
+				$('#loaderOverlay').show();
+			});
+			receivedAll = true;
+			$('#loaderOverlay').hide();
+		});
+	</script>
+</body>
+
+</html>

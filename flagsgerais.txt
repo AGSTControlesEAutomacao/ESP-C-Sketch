@@ -1,0 +1,40 @@
+Temperatura Alta
+Temperatura Baixa
+Temperatura Externa Alta
+Temperatura Externa Baixa
+Umidade Alta
+Umidade Baixa
+Umidade Externa Alta
+Umidade Externa Baixa
+Temperatura Critica
+Rede Geral Anormal
+Sistema Em Manutencao
+Gerador Geral B.Tudo
+Gerador Geral B.Aux
+Gerador Geral B.Res
+Def Rendimento Ta
+PLC Status Anormal
+Porta Aberta 1
+Porta Aberta 2
+Sensor Press 1
+Sensor Press 2
+Incendio 1
+Incendio 2
+Sistema Em Emergencia
+Sistema Em Economia
+Inversor Geral Atuado
+Resumo De Falhas
+Falha De Comunicação
+Invasao
+Alarme Ativo
+Falha No Economizador
+Falha Nos Sensores
+Sistema Reinicializado
+Led Vermelho Ligado
+Sonoalarme Ligado
+Umidificador Acionado
+Defeito Umidificador
+Insuflador Acionado
+Defeito Insuflador
+Bloqueio Do Sistema Por Incendio
+Sensor Água No Piso Atuando

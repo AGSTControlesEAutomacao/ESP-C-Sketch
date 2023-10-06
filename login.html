@@ -1,0 +1,76 @@
+<html lang="pt-br">
+
+<head>
+	<title>Controlador AGST</title>
+	<meta http-equiv="content-type" content="text/html;charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="icon" href="favicon.ico">
+	<link href="/style.css" rel="stylesheet">
+	<script src="/jquery-3.6.0.min.js"></script>
+</head>
+
+<body>
+	<script>
+		//Teste para exibição de mensagem de erro.
+		let errorValue = "%1";
+		if (errorValue != "") {
+			console.log('Erro');
+		}
+	</script>
+	<main class="lgn">
+		<form id='loginform' action="login.html" method="post" class="frm-lgn">
+
+			<div class="l-box">
+				<img src="/logoConflex.png">
+				<label class="lb-lgn">Usuário</label>
+				<input type="text" id='usr' name="usr" required="" placeholder="Entre com o nome" class="in-lgn">
+				<label class="lb-lgn">Senha</label>
+				<input type="password" id='pass' name="pass" required="" placeholder="Entre com a senha" class="in-lgn">
+				<p id='errormsg' class="lgn-msg"></p>&nbsp;
+				<div id='loader' class="loader" style='display: none'>
+					<div class="loaderBar"></div>
+				</div>
+				<input type="submit" value="Entrar" class="btn-lgn" name="sub" id="btn-login">
+				<img src="/logoAGST.png">
+				<input type="hidden" name="last-uri" id="last-uri">
+			</div>
+
+		</form>
+	</main>
+	<script>
+		let hiddenData = document.getElementById("last-uri");
+		let toRedirect = window.location.href.replace("login.html", "index.html"); //Pra previnir loop de redirecionamento.
+		hiddenData.value = toRedirect;
+
+		//Altera o submit do form para que execute um AJAX antes no pre-login
+		$('#loginform').submit(function (evt) {
+			$('#loader').css("display", ""); //Mostra o loader
+
+			let thisForm = $(this);
+			evt.preventDefault(); //this will prevent the default submit
+
+			$.ajax({
+				method: "POST",
+				url: "./pre-login",
+				contentType: 'application/json',
+				data: JSON.stringify({
+					usr: $('#usr').val(),
+					pass: $('#pass').val()
+				}),
+				statusCode: {
+					200: (rslt) => {
+						console.log('Login OK');
+						thisForm.unbind('submit').submit(); //Remove esse evento para enviar o form padrão
+					},
+					401: (rslt) => {
+						$('#loader').css("display", "none"); //Tira o loader
+						$('#errormsg').text(rslt.responseJSON.status);
+					}
+				}
+			});
+		});
+	</script>
+
+</body>
+
+</html>

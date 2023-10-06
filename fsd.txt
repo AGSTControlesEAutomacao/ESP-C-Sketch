@@ -1,0 +1,122 @@
+Sem Funcao
+Ventilador 1 Evaporador Z% Maq#
+Ventilador 2 Evaporador Z% Maq#
+Compressor 1 Z% Maq#
+Compressor 2 Z% Maq#
+Compressor 3 Z% Maq#
+Alarme Defeito Z% Maq#
+Alarme Temper. Alta 
+Alarme Umidade Alta 
+Alarme Rede Anormal 
+Status PLC 
+PLC OK 
+Alarme Em Manutencao 
+Resumo Defeito 
+Resistencia 1 Z% Maq#
+Resistencia 2 Z% Maq#
+Umidificador Z% Maq#
+Resumo Defeito Aparelhos 
+Damper Z% Maq#
+Alarme Economizador Z% 
+Resistencia Duto 1 Z% 
+Resistencia Duto 2 Z% 
+Umidificador Duto Z% 
+Resistencia 3 Z% Maq#
+Resistencia Duto 3 Z% 
+Damper Insuflador Z% 
+Damper Descarga Z% 
+Alarme Porta Aberta 
+Alarme Agua No Piso 
+Alarme Temp Anormal Z% 
+Alarme Umidade Anormal Z% 
+Alarme Temp Critica Zona Z% 
+Alarme Temp Baixa Zona Z% 
+Alarme Umidade Alta Zona Z% 
+Alarme Umidade Baixa Zona Z% 
+Alarme Defeito Maquinas Z% 
+Alarme Defeito Torre Z% Maq#
+Alarme Temp. Alta Zona Z% 
+Alarme Rede Anormal Zona Z% 
+Alarme G.m.g 
+Alarme Incendio Zona 
+Sistema Em Manual Zona Z% 
+Alarme Nivel Min.agua Z% 
+Alarme Nivel Critico Agua Z% 
+Alarme Falha De Alimentacao Z% Maq#
+Alarme Falha Alim. Bombas Z% Maq#
+Alarme Maquina Em Manual Z% Maq#
+Alarme Bloqueio Z% Maq#
+Alarme Falha Refrigeracao Z% Maq#
+Alarme Resumo De Falha Z% Maq#
+Al.baixo Nivel Umidificador Z% Maq#
+Al.baixo Nivel Umidfic. Duto Z% Maq#
+Alarme Pressao Alta Z% Maq#
+Alarme Pressao Baixa Z% Maq#
+Alarme Defeito Insuflador Z% 
+Alarme Defeito Descarga Z% 
+Alarme De Invasao 
+Habilita Maquina Z% Maq#
+Damper Cf Fech. Total 
+Damper Cf Fech. Parcial 
+Bypass Compressor 1 Z% Maq#
+Bypass Compressor 2 Z% Maq#
+Bypass Compressor 3 Z% Maq#
+Bypass Compressor 4 Z% Maq#
+Bypass Comrpessores Z% Maq#
+Alarme Pressao Ambiente Baixa Z% 
+Resumo De Alarmes Z% 
+Alarme Defeito 2 Z% Maq#
+Alarme Umidade Baixa 
+Alarme Insuflador Externo 
+Alarme Falha De Inversor 
+Alarme Filtro Sujo 
+Alarme Temper. Baixa 
+Valvula De Bloqueio Z% Maq#
+Alarme Incendio 
+Alarme Temp Anormal Ent Dagua Z Z% 
+Alarme Temp Anormal Ent Dagua Z M Z% Maq#
+Alarme Temp Baixa  
+Alarme Umidade Baixa 
+Alarme Temp Anormal 
+Alarme Umidade Anormal 
+Alarme Filtro Sujo 
+Habilita Cag Z% Maq#
+Liga/desl. Bag Primaria Z% Maq#
+Liga/desl. Bag Secundaria Z% Maq#
+Defeito Cag Z% Maq#
+Defeito Bag Primaria Z% Maq#
+Defeito Bag Secundaria Z% Maq#
+Baixo Nivel Tqe Expansao 
+Repetidor Cag Valvula Bloqueio Z% Maq#
+Alarme Cag Em Manual 
+Alarme Manual Bag Primaria 
+Alarme Manual Bag Secundaria 
+Alarme Sobrecarga Cag 
+Alarme Bag Pri Sobrecarga 
+Alarme Bag Sec Sobrecarga 
+Temp. Alta Saida D'agua Cag 
+Temperatura Externa Alta 
+Defeito Cag Z% 
+Defeito Bag Primaria Z% 
+Defeito Bag Secundaria Z% 
+Valvula Condensacao Z% Maq#
+Liga/desl. Torre Z% Maq#
+Liga/desl. Bac Z% Maq#
+Defeito Torre Z% Maq#
+Defeito Bac Z% Maq#
+Valvula Entrada D'agua Torre Z% Maq#
+Torre Em Manual Z% Maq#
+Bac Em Manual Z% Maq#
+Sobrecarga Torre 
+Sobrecarga Bac 
+Temp.alta Saida D'agua Torre Z% Maq#
+Defeito Torre Z% 
+Defeito Bac Z% 
+Valvula Saida D'agua Torre Z% Maq#
+Baixo Nivel Dagua Torre 
+Nivel Critico Dagua Torre 
+Liga/desl. Bomba Rep. Z% Maq#
+Defeito Bomba Rep. Z% Maq#
+Status PLC E Sis.automatico 
+Damper Fancoil Z% Maq#
+Temperatura E Umidade Anormais 

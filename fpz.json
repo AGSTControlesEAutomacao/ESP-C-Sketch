@@ -1,0 +1,317 @@
+[
+	{
+		"name": "Set Point Refrigeração",
+		"min": "1.0",
+		"max": "40.0",
+		"step": ".1",
+		"tp": "°C"
+	},
+	{
+		"name": "Histerese Refrigeração",
+		"min": "0.5",
+		"max": "10.0",
+		"step": ".1",
+		"tp": "°C"
+	},
+	{
+		"name": "Diferencial Temperatura entre Máquinas",
+		"min": "0",
+		"max": "10.0",
+		"step": ".1",
+		"tp": "°C"
+	},
+	{
+		"name": "Diferencial entre Estágios Refrigeração",
+		"min": "0",
+		"max": "10.0",
+		"step": ".1",
+		"tp": "°C"
+	},
+	{
+		"name": "Set Point Aquecimento",
+		"min": "0",
+		"max": "400",
+		"step": ".1",
+		"tp": "°C"
+	},
+	{
+		"name": "Histerese Aquecimento",
+		"min": "0.5",
+		"max": "20.0",
+		"step": ".1",
+		"tp": "°C"
+	},
+	{
+		"name": "Diferencial entre Estágios Aquecimento",
+		"min": "0",
+		"max": "40.0",
+		"step": ".1",
+		"tp": "°C"
+	},
+	{
+		"name": "Diferencial Mínimo Ambiente Insuflamento",
+		"min": "0",
+		"max": "100",
+		"step": ".1",
+		"tp": "°C"
+	},
+	{
+		"name": "Temperatura Interna Baixa para Alarme",
+		"min": "1",
+		"max": "50.0",
+		"step": ".1",
+		"tp": "°C"
+	},
+	{
+		"name": "Temperatura Interna Alta para Alarme",
+		"min": "0",
+		"max": "100.0",
+		"step": ".1",
+		"tp": "°C"
+	},
+	{
+		"name": "Temperatura Interna Crítica para Alarme",
+		"min": "0",
+		"max": "100.0",
+		"step": ".1",
+		"tp": "°C"
+	},
+	{
+		"name": "Temperatura Interna Alta para Emergência",
+		"min": "0",
+		"max": "70.0",
+		"step": ".5",
+		"tp": "°C"
+	},
+	{
+		"name": "Taxa Máxima para Variação de Temperatura",
+		"min": "1",
+		"max": "20.0",
+		"step": ".1",
+		"tp": "°C"
+	},
+	{
+		"name": "Set Point de Desumidificação",
+		"min": "1",
+		"max": "90",
+		"step": "1",
+		"tp": "%"
+	},
+	{
+		"name": "Histerese de Desumidificação",
+		"min": "1",
+		"max": "90",
+		"step": "1",
+		"tp": "%"
+	},
+	{
+		"name": "Diferencial de Desumidificação entre Estágios",
+		"min": "1",
+		"max": "50",
+		"step": "1",
+		"tp": "%"
+	},
+	{
+		"name": "Diferencial de Desumidificação entre Máquinas",
+		"min": "1",
+		"max": "50",
+		"step": "1",
+		"tp": "%"
+	},
+	{
+		"name": "Set Point de Umidificação",
+		"min": "1",
+		"max": "50",
+		"step": "1",
+		"tp": "%"
+	},
+	{
+		"name": "Histerese de Umidificação",
+		"min": "1",
+		"max": "50",
+		"step": "1",
+		"tp": "%"
+	},
+	{
+		"name": "Diferencial de Umidificação entre Estágios",
+		"min": "5",
+		"max": "50",
+		"step": "1",
+		"tp": "%"
+	},
+	{
+		"name": "Diferencial de Umidificação entre Máquinas",
+		"min": "5",
+		"max": "50",
+		"step": "1",
+		"tp": "%"
+	},
+	{
+		"name": "Umidade Interna Baixa para Alarme",
+		"min": "5",
+		"max": "60",
+		"step": "1",
+		"tp": "%"
+	},
+	{
+		"name": "Umidade Interna Alta para Alarme",
+		"min": "1",
+		"max": "99",
+		"step": "1",
+		"tp": "%"
+	},
+	{
+		"name": "Número Aparelhos",
+		"min": "0",
+		"max": "8",
+		"step": "1",
+		"tp": ""
+	},
+	{
+		"name": "Número Máximo de Aparelhos",
+		"min": "0",
+		"max": "8",
+		"step": "1",
+		"tp": ""
+	},
+	{
+		"name": "Temperatura de Desligamento Ventiladores",
+		"min": "0",
+		"max": "400",
+		"step": ".1",
+		"tp": "°C"
+	},
+	{
+		"name": "Temperatura Externa Máxima para Economizador",
+		"min": "1",
+		"max": "400",
+		"step": ".1",
+		"tp": "°C"
+	},
+	{
+		"name": "Umidade Externa Máxima para Economizador",
+		"min": "5",
+		"max": "90",
+		"step": "1",
+		"tp": "%"
+	},
+	{
+		"name": "Histerese Temperatura Economizador",
+		"min": "2",
+		"max": "300",
+		"step": ".1",
+		"tp": "°C"
+	},
+	{
+		"name": "Histerese Umidade Economizador",
+		"min": "1",
+		"max": "50",
+		"step": "1",
+		"tp": "%"
+	},
+	{
+		"name": "Tempo Revezamento Máquinas",
+		"min": "0",
+		"max": "250",
+		"step": "1",
+		"tp": "h"
+	},
+	{
+		"name": "ID Máquinas",
+		"min": "1",
+		"max": "64",
+		"step": "1",
+		"tp": ""
+	},
+	{
+		"name": "Dia Revezamento Semanal",
+		"min": "0",
+		"max": "7",
+		"step": "1",
+		"tp": ""
+	},
+	{
+		"name": "Hora Revezamento Semanal",
+		"min": "0",
+		"max": "23",
+		"step": "1",
+		"tp": "h"
+	},
+	{
+		"name": "Minuto Revezamento Semanal",
+		"min": "0",
+		"max": "59",
+		"step": "1",
+		"tp": "min"
+	},
+	{
+		"name": "Pressão Ambiente Baixa para Alarme",
+		"min": "0",
+		"max": "1000",
+		"step": "1",
+		"tp": "r/min"
+	},
+	{
+		"name": "Banda Proporcional 1 Refrigeração",
+		"min": "0",
+		"max": "255",
+		"step": "1",
+		"tp": "%"
+	},
+	{
+		"name": "Taxa Integral 1 Refrigeração",
+		"min": "0",
+		"max": "255",
+		"step": "1",
+		"tp": "r/min"
+	},
+	{
+		"name": "Tempo Derivativo 1 Refrigeração",
+		"min": "0",
+		"max": "255",
+		"step": "1",
+		"tp": ""
+	},
+	{
+		"name": "Taxa Atuação PID 1 Refrigeração",
+		"min": "0",
+		"max": "255",
+		"step": "1",
+		"tp": ""
+	},
+	{
+		"name": "Histerese Atuação PID 1 Refrigeração",
+		"min": "0",
+		"max": "200",
+		"step": "1",
+		"tp": "%"
+	},
+	{
+		"name": "Controle Refrigeração (0-Normal 1-PID1 2-PID2)",
+		"min": "0",
+		"max": "2",
+		"step": "1",
+		"tp": "h"
+	},
+	{
+		"name": "Número de Estágios Refrigeração",
+		"min": "0",
+		"max": "64",
+		"step": "1",
+		"tp": "h"
+	},
+	{
+		"name": "Tempo de Revezamento de Compressores",
+		"min": "0",
+		"max": "255",
+		"step": "1",
+		"tp": "seg"
+	},
+	{
+		"name": "Forma de Bloqueio Máquinas",
+		"min": "0",
+		"max": "1",
+		"step": "1",
+		"tp": "0"
+	}
+]

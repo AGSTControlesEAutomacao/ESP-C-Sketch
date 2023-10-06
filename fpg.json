@@ -1,0 +1,191 @@
+[
+	{
+		"name": "Retardo para Setar Alarmes",
+		"min": "0",
+		"max": "200",
+		"step": "1",
+		"tp": "seg"
+	},
+	{
+		"name": "Retardo para Ligar Ventilador do Evaporador",
+		"min": "0",
+		"max": "60",
+		"step": "1",
+		"tp": "seg"
+	},
+	{
+		"name": "Retardo para Ligar Compressor",
+		"min": "0",
+		"max": "60",
+		"step": "1",
+		"tp": "seg"
+	},
+	{
+		"name": "Tempo Mínimo de Repouso para Compressor",
+		"min": "0",
+		"max": "240",
+		"step": "1",
+		"tp": "min"
+	},
+	{
+		"name": "Tempo Mínimo Teste Ventilador do Evaporador",
+		"min": "1",
+		"max": "240",
+		"step": "1",
+		"tp": "seg"
+	},
+	{
+		"name": "Retardo para Teste do Compressor, Aquecimento e Umidificador",
+		"min": "1",
+		"max": "240",
+		"step": "1",
+		"tp": "seg"
+	},
+	{
+		"name": "Retardo para Desligar Ventilador em Aquecimento",
+		"min": "1",
+		"max": "240",
+		"step": "1",
+		"tp": "seg"
+	},
+	{
+		"name": "Retardo para Teste Rendimento por Insuflamento",
+		"min": "0",
+		"max": "60",
+		"step": "1",
+		"tp": "min"
+	},
+	{
+		"name": "Retardo para Teste Rendimento por Temperatura Alta",
+		"min": "0",
+		"max": "240",
+		"step": "1",
+		"tp": "min"
+	},
+	{
+		"name": "Tempo Compressor Ligado por Falha Sensor Temperatura Interna",
+		"min": "1",
+		"max": "25",
+		"step": "1",
+		"tp": "min"
+	},
+	{
+		"name": "Número de Resets Automáticos por Falha",
+		"min": "0",
+		"max": "65",
+		"step": "1",
+		"tp": ""
+	},
+	{
+		"name": "Intervalos entre Registros das Entradas Analógicas",
+		"min": "1",
+		"max": "15",
+		"step": "1",
+		"tp": "min"
+	},
+	{
+		"name": "Histerese para Sair Alarme Temperatura",
+		"min": "1",
+		"max": "250",
+		"step": ".1",
+		"tp": "°C"
+	},
+	{
+		"name": "Histerese para Sair Alarme Umidade",
+		"min": "1",
+		"max": "50",
+		"step": "1",
+		"tp": "%"
+	},
+	{
+		"name": "Modo Medidas Analógicas",
+		"min": "0",
+		"max": "4",
+		"step": "1",
+		"tp": ""
+	},
+	{
+		"name": "Tempo By-Pass Compressor",
+		"min": "1",
+		"max": "30",
+		"step": "1",
+		"tp": "min"
+	},
+	{
+		"name": "Tempo Revezamento dos Compressores",
+		"min": "1",
+		"max": "255",
+		"step": "1",
+		"tp": "h"
+	},
+	{
+		"name": "Reservado",
+		"min": "0",
+		"max": "255",
+		"step": "1",
+		"tp": ""
+	},
+	{
+		"name": "Tempo de Interlock Ventiladores e Compressores",
+		"min": "0",
+		"max": "10",
+		"step": "1",
+		"tp": "seg"
+	},
+	{
+		"name": "Modo Válvula Condensação",
+		"min": "0",
+		"max": "1",
+		"step": "1",
+		"tp": ""
+	},
+	{
+		"name": "Tempo de Reenvio IrCom",
+		"min": "1",
+		"max": "255",
+		"step": "1",
+		"tp": "min"
+	},
+	{
+		"name": "Tempo de Emergência para IrCom",
+		"min": "1",
+		"max": "255",
+		"step": "1",
+		"tp": "min"
+	},
+	{
+		"name": "Banda Neutra IrCom",
+		"min": "1",
+		"max": "100",
+		"step": ".1",
+		"tp": "°C"
+	},
+	{
+		"name": "Temperatura de Emergência",
+		"min": "18.0",
+		"max": "28.0",
+		"step": ".1",
+		"tp": "°C"
+	},
+	{
+		"name": "Tempo Restart IrCom",
+		"min": "1",
+		"max": "240",
+		"step": "1",
+		"tp": "min"
+	},
+	{
+		"name": "Reservado",
+		"min": "0",
+		"max": "400",
+		"step": "1",
+		"tp": ""
+	},
+	{
+		"name": "Polaridade SA (0-Normal e 1-Invertida)",
+		"min": "0",
+		"max": "1",
+		"step": "1",
+		"tp": ""
+	}
+]

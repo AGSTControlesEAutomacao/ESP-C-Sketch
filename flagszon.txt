@@ -1,0 +1,30 @@
+Temperatura Alta Z%
+Temperatura Baixa Z%
+Temperatura Critica Z%
+Umidade Alta Z%
+Umidade Baixa Z%
+Sistema Em Automatico Z%
+Gerador Geral B. Tudo Z%
+Gerador Geral B. Aux Z%
+Gerador Geral B. Res Z%
+Def Rendimento Ta Z%
+Incendio Z%
+Falha Economizador Z%
+Termostato De Segurança Zona1
+Falha De Inversor Z%
+Resistencia Duto Z%
+Resistencia Duto 2 Z%
+Resistencia Duto 3 Z%
+Umidificador Duto Z%
+Damper Descarga Z%
+Resumo De Falhas Z%
+Insuflador Acionado Z%
+Defeito Insuflador Z%
+Defeito Damper Descarga Z%
+Rede Anormal Z%
+Bloqueio Z%
+
+Maquinas Standby Liberadas Z%
+Baixo Nivel Agua Umidificador Z%
+Controle Horario Desliga Z%
+Controle Horario Liga Z%
